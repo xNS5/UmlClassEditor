@@ -4,19 +4,19 @@
     <group android:checkableBehavior="none">
         <item
             android:id="@+id/drawer_menu_new_project"
-            android:title="New project"/>
+            android:title="New Project" />
         <item
             android:id="@+id/drawer_menu_load_project"
-            android:title="Load project"/>
+            android:title="Load Project" />
         <item
             android:id="@+id/drawer_menu_save_as"
             android:title="Save as"/>
         <item
             android:id="@+id/drawer_menu_merge_project"
-            android:title="Merge project"/>
+            android:title="Merge Project" />
         <item
             android:id="@+id/drawer_menu_delete_project"
-            android:title="Delete project"/>
+            android:title="Delete Project" />
     </group>
 
 </menu>

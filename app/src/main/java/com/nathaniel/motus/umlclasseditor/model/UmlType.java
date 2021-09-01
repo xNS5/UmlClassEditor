@@ -2,6 +2,7 @@ package com.nathaniel.motus.umlclasseditor.model;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 
 import com.nathaniel.motus.umlclasseditor.R;
@@ -13,6 +14,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
+
+import androidx.annotation.RequiresApi;
 
 public class UmlType {
     //type of attributes and parameters, such as int, String, etc.
@@ -183,10 +187,18 @@ public class UmlType {
 
     public static void initializeCustomUmlTypes(Context context) {
         try {
-            JSONObject jsonObject=new JSONObject(IOUtils.getFileFromInternalStorage(new File(context.getFilesDir(),CUSTOM_TYPES_FILENAME)));
-            Log.i("TEST","Loaded custom types");
-            JSONArray jsonCustomTypes=jsonObject.getJSONArray(JSON_CUSTOM_TYPES);
-            UmlType.createCustomUmlTypesFromJSONArray(jsonCustomTypes);
+            /*
+            * If...else block catches JSONobject error "End of input at character 0"
+             * */
+            String file = IOUtils.getFileFromInternalStorage(new File(context.getFilesDir(),CUSTOM_TYPES_FILENAME));
+            if(file.length() > 0){
+                JSONObject jsonObject=new JSONObject();
+                Log.i("TEST","Loaded custom types");
+                JSONArray jsonCustomTypes=jsonObject.getJSONArray(JSON_CUSTOM_TYPES);
+                UmlType.createCustomUmlTypesFromJSONArray(jsonCustomTypes);
+            } else{
+                Log.i("TEST", "No custom types available");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

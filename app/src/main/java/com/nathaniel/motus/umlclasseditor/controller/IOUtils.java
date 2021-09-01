@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Objects;
 
 public class IOUtils {
 
@@ -39,7 +40,8 @@ public class IOUtils {
     }
 
     public static String getFileFromInternalStorage(File file) {
-        String projectString="";
+        // Using a StringBuilder instead of a String
+        StringBuilder projectString = new StringBuilder();
         if (file.exists()) {
             BufferedReader bufferedReader;
             try {
@@ -47,7 +49,7 @@ public class IOUtils {
                 try {
                     String readString = bufferedReader.readLine();
                     while (readString != null) {
-                        projectString = projectString + readString;
+                        projectString.append(readString);
                         readString = bufferedReader.readLine();
                     }
                 } finally {
@@ -57,7 +59,7 @@ public class IOUtils {
                 Log.i("TEST","Loading failed");
             }
         }
-        return projectString;
+        return projectString.toString();
     }
 
     public static void saveFileToExternalStorage(Context context, String data, Uri externalStorageUri) {
@@ -69,7 +71,7 @@ public class IOUtils {
             Log.i("TEST", "Project saved");
         } catch (IOException e) {
             Log.i("TEST","Failed saving project");
-            Log.i("TEST",e.getMessage());
+            Log.i("TEST", Objects.requireNonNull(e.getMessage()));
         }
     }
 
@@ -87,14 +89,15 @@ public class IOUtils {
         return data;
     }
 
-    public static ArrayList<String> sortedFiles(File file) {
-        File[] files=file.listFiles();
-        ArrayList<String> fileList=new ArrayList<>();
-
-        for (File f:files) fileList.add(f.getName());
-
-        Collections.sort(fileList);
-        return fileList;
+    public static ArrayList<String> sortedFiles(File[] file) {
+        // Checks to make sure that the file array isn't null
+       if(file != null){
+           ArrayList<String> fileList =new ArrayList<>();
+           for (File f:file) fileList.add(f.getName());
+           Collections.sort(fileList);
+           return fileList;
+       }
+       return new ArrayList<>();
     }
 
     public static String readRawHtmlFile(Context context,int rawId) {
