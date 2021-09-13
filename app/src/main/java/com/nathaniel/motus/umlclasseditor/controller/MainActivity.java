@@ -444,9 +444,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
                 .setView(editText)
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
+                    public void onClick(DialogInterface dialogInterface, int i) {}
                 })
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -467,122 +465,149 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
     }
 
     private void drawerMenuLoadProject() {
-        mProject.save(this);
+        final Context context=this;
+        final Spinner spinner=new Spinner(context);
+        ArrayAdapter<String> adapter = projectDirectoryAdapter();
+        /*
+         * Gets the adapter and checks to see if it contains any files to load. If there are none, a toast message pops up alerting the user.
+         * */
+        if(adapter.getCount() > 0){
+            spinner.setAdapter(adapter);
+            AlertDialog.Builder builder=new AlertDialog.Builder(this);
+            builder.setTitle("Load project")
+                    .setMessage("Choose project to load :")
+                    .setView(spinner)
+                    .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
 
-        final Spinner spinner=new Spinner(this);
-        spinner.setAdapter(projectDirectoryAdapter());
-
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setTitle("Load project")
-                .setMessage("Choose project to load :")
-                .setView(spinner)
-                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                })
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String fileName=spinner.getSelectedItem().toString();
-                        if (fileName!=null) {
-                            UmlType.clearProjectUmlTypes();
-                            mProject = UmlProject.load(getApplicationContext(), fileName);
-                            mGraphView.setUmlProject(mProject);
-                            updateNavigationView();
                         }
-                    }
-                })
-                .create()
-                .show();
+                    })
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            String fileName=spinner.getSelectedItem().toString();
+                            if (fileName!=null) {
+                                UmlType.clearProjectUmlTypes();
+                                mProject = UmlProject.load(getApplicationContext(), fileName);
+                                mGraphView.setUmlProject(mProject);
+                                updateNavigationView();
+                            }
+                        }
+                    })
+                    .create()
+                    .show();
+        } else {
+            Toast.makeText(context,"No files to load",Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void drawerMenuDeleteProject() {
-
         final Context context=this;
+        final Spinner spinner=new Spinner(context);
+        ArrayAdapter<String> adapter = projectDirectoryAdapter();
+        /*
+        * Gets the adapter and checks to see if it contains any files to delete. If there are none, a toast message pops up alerting the user.
+        * */
+        if(adapter.getCount() > 0){
+            spinner.setAdapter(adapter);
+            AlertDialog.Builder builder=new AlertDialog.Builder(this);
+            builder.setTitle("Delete project")
+                    .setMessage("Choose project to delete :")
+                    .setView(spinner)
+                    .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
 
-        final Spinner spinner=new Spinner(this);
-        spinner.setAdapter(projectDirectoryAdapter());
-
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setTitle("Delete project")
-                .setMessage("Choose project to delete :")
-                .setView(spinner)
-                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                })
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String fileName=spinner.getSelectedItem().toString();
-                        if (fileName!=null) {
-                            File pathName=new File(getFilesDir(),UmlProject.PROJECT_DIRECTORY);
-                            final File file=new File(pathName,fileName);
-                            AlertDialog.Builder alert=new AlertDialog.Builder(context);
-                            alert.setTitle("Delete Project")
-                                    .setMessage("Are you sure you want to delete "+fileName+" ?")
-                                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                                        }
-                                    })
-                                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            file.delete();
-                                        }
-                                    })
-                                    .create()
-                                    .show();
                         }
-                    }
-                })
-                .create()
-                .show();
+                    })
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            String fileName=spinner.getSelectedItem().toString();
+                            if (fileName!=null) {
+                                File pathName=new File(getFilesDir(),UmlProject.PROJECT_DIRECTORY);
+                                final File file=new File(pathName,fileName);
+                                AlertDialog.Builder alert=new AlertDialog.Builder(context);
+                                alert.setTitle("Delete Project")
+                                        .setMessage("Are you sure you want to delete "+fileName+" ?")
+                                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                            }
+                                        })
+                                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                file.delete();
+                                            }
+                                        })
+                                        .create()
+                                        .show();
+                            }
+                        }
+                    })
+                    .create()
+                    .show();
+        } else {
+            Toast.makeText(context,"No projects to delete",Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void drawerMenuMerge() {
-        final Spinner spinner=new Spinner(this);
-        spinner.setAdapter(projectDirectoryAdapter());
-        final Context currentContext=this;
-
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setTitle("Merge project")
-                .setMessage("Choose project to merge")
-                .setView(spinner)
-                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                })
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String fileName=spinner.getSelectedItem().toString();
-                        if (fileName!=null) {
-                            UmlProject project = UmlProject.load(getApplicationContext(), fileName);
-                            mProject.mergeWith(project);
-                            mGraphView.invalidate();
+        final Context context =this;
+        final Spinner spinner=new Spinner(context);
+        ArrayAdapter<String> adapter = projectDirectoryAdapter();
+        /*
+         * Gets the adapter and checks to see if it contains any files to merge. If there are none, a toast message pops up alerting the user.
+         * */
+        if(adapter.getCount() > 0){
+            spinner.setAdapter(adapter);
+            AlertDialog.Builder builder=new AlertDialog.Builder(this);
+            builder.setTitle("Merge project")
+                    .setMessage("Choose project to merge")
+                    .setView(spinner)
+                    .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
                         }
+                    })
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            String fileName=spinner.getSelectedItem().toString();
+                            if (fileName!=null) {
+                                UmlProject project = UmlProject.load(getApplicationContext(), fileName);
+                                assert project != null;
+                                mProject.mergeWith(project);
+                                mGraphView.invalidate();
+                            }
 
-                    }
-                })
-                .create()
-                .show();
-
+                        }
+                    })
+                    .create()
+                    .show();
+        } else {
+            Toast.makeText(context,"No projects to merge",Toast.LENGTH_SHORT).show();
+        }
     }
 
     private ArrayAdapter<String> projectDirectoryAdapter() {
-        //Create an array adapter to set a spinner with all project file names
-        ArrayAdapter<String> adapter=new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,IOUtils.sortedFiles(new File(getFilesDir(),UmlProject.PROJECT_DIRECTORY)));
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        return adapter;
+        /*
+        * Create an array adapter to set a spinner with all project file names
+        *
+        * Added try...catch blocks to catch a null pointer exception that occurs when the user tries to delete a file when there are none saved.
+        * */
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new ArrayList<>());
+        File[] file_list = new File(getFilesDir(), UmlProject.PROJECT_DIRECTORY).listFiles();
+        try {
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, IOUtils.sortedFiles(file_list));
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        } catch(NullPointerException e){
+            e.printStackTrace();
+        }
+       return adapter;
     }
 
 //    **********************************************************************************************
@@ -792,6 +817,4 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
                 requestPermissions(permissionString, REQUEST_PERMISSION);
         }
     }
-
-
 }
