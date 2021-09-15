@@ -1,4 +1,0 @@
-#Mon Sep 13 17:23:06 PDT 2021
-base.0=/Users/michaelkennedy/Git/osp/UmlClassEditor/app/build/intermediates/dex/debug/mergeDexDebug/classes.dex
-renamed.0=classes.dex
-path.0=classes.dex
