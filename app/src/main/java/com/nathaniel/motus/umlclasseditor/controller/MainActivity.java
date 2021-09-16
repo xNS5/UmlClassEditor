@@ -30,13 +30,10 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.*;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
 import androidx.core.view.MenuCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -64,15 +61,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements FragmentObserver,
-        GraphView.GraphViewObserver,
-        NavigationView.OnNavigationItemSelectedListener{
+        GraphView.GraphViewObserver
+        /*NavigationView.OnNavigationItemSelectedListener*/{
 
     private UmlProject mProject;
-    private boolean mExpectingTouchLocation=false;
-    private Purpose mPurpose= FragmentObserver.Purpose.NONE;
-    private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
+//    private NavigationView mNavigationView;
     private TextView mMenuHeaderProjectNameText;
 
     private static boolean sWriteExternalStoragePermission =true;
@@ -81,9 +75,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
     private static final int READ_EXTERNAL_STORAGE_INDEX=1;
 
     private long mFirstBackPressedTime =0;
-    private static long DOUBLE_BACK_PRESSED_DELAY=2000;
     private OnBackPressedCallback mOnBackPressedCallback;
-    private Spinner spinner;
 
 //    **********************************************************************************************
 //    Fragments declaration
@@ -102,8 +94,6 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
     private static final String SHARED_PREFERENCES_PROJECT_NAME="sharedPreferencesProjectName";
 
-    private static final String[] CUSTOM_TYPES_BUTTON_ARR = {"Create", "Delete", "Export", "Import"};
-
     private static final int INTENT_CREATE_DOCUMENT_EXPORT_PROJECT =1000;
     private static final int INTENT_OPEN_DOCUMENT_IMPORT_PROJECT =2000;
     private static final int INTENT_CREATE_DOCUMENT_EXPORT_CUSTOM_TYPES=3000;
@@ -111,18 +101,15 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
     private static final int REQUEST_PERMISSION=5000;
 
-//    **********************************************************************************************
-//    Views declaration
-//    **********************************************************************************************
-    private FrameLayout mMainActivityFrame;
     private GraphView mGraphView;
-    private ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+    private final ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         try{
                             Intent intent = result.getData();
+                            assert intent != null;
                             Uri fileNameUri= intent.getData();
                             Context context = getBaseContext();
                             int subIntent = intent.getIntExtra("intent", -1);
@@ -160,15 +147,20 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         setContentView(R.layout.activity_main);
 
         //Instantiate views
-        mMainActivityFrame = findViewById(R.id.activity_main_frame);
+        //    **********************************************************************************************
+        //    Views declaration
+        //    **********************************************************************************************
+        FrameLayout mMainActivityFrame = findViewById(R.id.activity_main_frame);
 
         UmlType.clearUmlTypes();
         UmlType.initializePrimitiveUmlTypes(this);
         UmlType.initializeCustomUmlTypes(this);
         getPreferences();
         configureToolbar();
+        // this locks the drawer shut without completely disabling it
+
         configureDrawerLayout();
-        configureNavigationView();
+//        configureNavigationView();
         configureAndDisplayGraphFragment(R.id.activity_main_frame);
         createOnBackPressedCallback();
         setOnBackPressedCallback();
@@ -220,24 +212,25 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 //    **********************************************************************************************
 
     private void configureToolbar() {
-        mToolbar = findViewById(R.id.main_activity_toolbar);
+        Toolbar mToolbar = findViewById(R.id.main_activity_toolbar);
         setSupportActionBar(mToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
     }
 
     private void configureDrawerLayout() {
         mDrawerLayout=findViewById(R.id.activity_main_drawer);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        mDrawerLayout.addDrawerListener(toggle);
+//        toggle.syncState();
     }
-
-    private void configureNavigationView() {
-        mNavigationView=findViewById(R.id.activity_main_navigation_view);
-        mMenuHeaderProjectNameText= mNavigationView.getHeaderView(0).findViewById(R.id.activity_main_navigation_view_header_project_name_text);
-        updateNavigationView();
-        mNavigationView.setNavigationItemSelectedListener(this);
-    }
+//
+//    private void configureNavigationView() {
+//        mNavigationView=findViewById(R.id.activity_main_navigation_view);
+//        mMenuHeaderProjectNameText= mNavigationView.getHeaderView(0).findViewById(R.id.activity_main_navigation_view_header_project_name_text);
+//        updateNavigationView();
+//        mNavigationView.setNavigationItemSelectedListener(this);
+//    }
 
     private void updateNavigationView() {
         mMenuHeaderProjectNameText.setText(mProject.getName());
@@ -275,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
     }
 
     private void onBackButtonPressed() {
+        long DOUBLE_BACK_PRESSED_DELAY = 2000;
         if (Calendar.getInstance().getTimeInMillis() - mFirstBackPressedTime > DOUBLE_BACK_PRESSED_DELAY) {
             mFirstBackPressedTime=Calendar.getInstance().getTimeInMillis();
             Toast.makeText(this,"Press back again to leave",Toast.LENGTH_SHORT).show();
@@ -379,7 +373,6 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
     @Override
     public void setPurpose(Purpose purpose) {
-        mPurpose=purpose;
     }
 
     @Override
@@ -442,6 +435,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
     @Override
     public boolean isExpectingTouchLocation() {
+        boolean mExpectingTouchLocation = false;
         return mExpectingTouchLocation;
     }
 
@@ -465,24 +459,24 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 //    Navigation view events
 //    **********************************************************************************************
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int menuId=item.getItemId();
-        if (menuId == R.id.toolbar_menu_new_project) {
-            toolbarMenuNewProject();
-        } else if (menuId == R.id.toolbar_menu_load_project) {
-            toolbarMenuLoadProject();
-        } else if (menuId == R.id.toolbar_menu_save_as) {
-            toolbarMenuSaveAs();
-        } else if (menuId == R.id.toolbar_menu_merge_project) {
-            toolbarMenuMerge();
-        } else if (menuId == R.id.toolbar_menu_delete_project) {
-            toolbarMenuDeleteProject();
-        }
-        this.mDrawerLayout.closeDrawer(GravityCompat.START);
-
-        return true;
-    }
+//    @Override
+//    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//        int menuId=item.getItemId();
+//        if (menuId == R.id.toolbar_menu_new_project) {
+//            toolbarMenuNewProject();
+//        } else if (menuId == R.id.toolbar_menu_load_project) {
+//            toolbarMenuLoadProject();
+//        } else if (menuId == R.id.toolbar_menu_save_as) {
+//            toolbarMenuSaveAs();
+//        } else if (menuId == R.id.toolbar_menu_merge_project) {
+//            toolbarMenuMerge();
+//        } else if (menuId == R.id.toolbar_menu_delete_project) {
+//            toolbarMenuDeleteProject();
+//        }
+//        this.mDrawerLayout.closeDrawer(GravityCompat.START);
+//
+//        return true;
+//    }
 
 //    **********************************************************************************************
 //    Navigation view called methods
