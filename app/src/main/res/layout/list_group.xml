@@ -9,8 +9,9 @@
         android:id="@+id/group_text"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-        android:textSize="17dp"
+        android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
+        android:paddingEnd="?android:attr/expandableListPreferredItemIndicatorRight"
+        android:textSize="17sp"
         />
 
 </LinearLayout>
