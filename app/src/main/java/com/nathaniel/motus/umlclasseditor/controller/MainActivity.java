@@ -1,6 +1,8 @@
 package com.nathaniel.motus.umlclasseditor.controller;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,11 +27,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.*;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.MenuCompat;
@@ -51,10 +56,12 @@ import com.nathaniel.motus.umlclasseditor.view.MethodEditorFragment;
 import com.nathaniel.motus.umlclasseditor.view.ParameterEditorFragment;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements FragmentObserver,
         GraphView.GraphViewObserver,
@@ -76,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
     private long mFirstBackPressedTime =0;
     private static long DOUBLE_BACK_PRESSED_DELAY=2000;
     private OnBackPressedCallback mOnBackPressedCallback;
+    private Spinner spinner;
 
 //    **********************************************************************************************
 //    Fragments declaration
@@ -94,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
     private static final String SHARED_PREFERENCES_PROJECT_NAME="sharedPreferencesProjectName";
 
+    private static final String[] CUSTOM_TYPES_BUTTON_ARR = {"Create", "Delete", "Export", "Import"};
+
     private static final int INTENT_CREATE_DOCUMENT_EXPORT_PROJECT =1000;
     private static final int INTENT_OPEN_DOCUMENT_IMPORT_PROJECT =2000;
     private static final int INTENT_CREATE_DOCUMENT_EXPORT_CUSTOM_TYPES=3000;
@@ -106,6 +116,42 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 //    **********************************************************************************************
     private FrameLayout mMainActivityFrame;
     private GraphView mGraphView;
+    private ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        try{
+                            Intent intent = result.getData();
+                            Uri fileNameUri= intent.getData();
+                            Context context = getBaseContext();
+                            int subIntent = intent.getIntExtra("intent", -1);
+                            switch(subIntent){
+                                case INTENT_CREATE_DOCUMENT_EXPORT_PROJECT:
+                                    mProject.exportProject(context,fileNameUri);
+                                    break;
+                                case INTENT_OPEN_DOCUMENT_IMPORT_PROJECT:
+                                    UmlType.clearProjectUmlTypes();
+                                    mProject=UmlProject.importProject(context,fileNameUri);
+                                    mGraphView.setUmlProject(mProject);
+                                    break;
+                                case INTENT_CREATE_DOCUMENT_EXPORT_CUSTOM_TYPES:
+                                    UmlType.exportCustomUmlTypes(context,fileNameUri);
+                                    break;
+                                case INTENT_OPEN_DOCUMENT_IMPORT_CUSTOM_TYPES:
+                                    UmlType.importCustomUmlTypes(context,fileNameUri);
+                                    break;
+                            }
+
+                        }catch(NullPointerException e){
+                            Log.i("TEST", "ActivityResult is Null");
+                        }
+
+                    }
+                }
+            });
+
+
 
 
     @Override
@@ -114,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         setContentView(R.layout.activity_main);
 
         //Instantiate views
-        mMainActivityFrame=findViewById(R.id.activity_main_frame);
+        mMainActivityFrame = findViewById(R.id.activity_main_frame);
 
         UmlType.clearUmlTypes();
         UmlType.initializePrimitiveUmlTypes(this);
@@ -128,17 +174,22 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         setOnBackPressedCallback();
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main_toolbar_menu,menu);
         MenuCompat.setGroupDividerEnabled(menu,true);
+        //    Allows to display the menu icons
+        if(menu instanceof MenuBuilder){
+            MenuBuilder m = (MenuBuilder) menu;
+            m.setOptionalIconsVisible(true);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
         mGraphView=findViewById(R.id.graphview);
         mGraphView.setUmlProject(mProject);
         Log.i("TEST","onStart");
@@ -163,13 +214,15 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         checkPermissions();
     }
 
+
 //    **********************************************************************************************
 //    Configuration methods
 //    **********************************************************************************************
 
     private void configureToolbar() {
-        mToolbar=findViewById(R.id.main_activity_toolbar);
+        mToolbar = findViewById(R.id.main_activity_toolbar);
         setSupportActionBar(mToolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
     }
 
     private void configureDrawerLayout() {
@@ -415,16 +468,16 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int menuId=item.getItemId();
-        if (menuId == R.id.drawer_menu_new_project) {
-            drawerMenuNewProject();
-        } else if (menuId == R.id.drawer_menu_load_project) {
-            drawerMenuLoadProject();
-        } else if (menuId == R.id.drawer_menu_save_as) {
-            drawerMenuSaveAs();
-        } else if (menuId == R.id.drawer_menu_merge_project) {
-            drawerMenuMerge();
-        } else if (menuId == R.id.drawer_menu_delete_project) {
-            drawerMenuDeleteProject();
+        if (menuId == R.id.toolbar_menu_new_project) {
+            toolbarMenuNewProject();
+        } else if (menuId == R.id.toolbar_menu_load_project) {
+            toolbarMenuLoadProject();
+        } else if (menuId == R.id.toolbar_menu_save_as) {
+            toolbarMenuSaveAs();
+        } else if (menuId == R.id.toolbar_menu_merge_project) {
+            toolbarMenuMerge();
+        } else if (menuId == R.id.toolbar_menu_delete_project) {
+            toolbarMenuDeleteProject();
         }
         this.mDrawerLayout.closeDrawer(GravityCompat.START);
 
@@ -435,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 //    Navigation view called methods
 //    **********************************************************************************************
 
-    private void drawerMenuSaveAs() {
+    private void toolbarMenuSaveAs() {
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         final EditText editText=new EditText(this);
         editText.setText(mProject.getName());
@@ -456,7 +509,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
                 .show();
     }
 
-    private void drawerMenuNewProject() {
+    private void toolbarMenuNewProject() {
         mProject.save(this);
         UmlType.clearProjectUmlTypes();
         mProject=new UmlProject("NewProject",this);
@@ -464,7 +517,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         updateNavigationView();
     }
 
-    private void drawerMenuLoadProject() {
+    private void toolbarMenuLoadProject() {
         final Context context=this;
         final Spinner spinner=new Spinner(context);
         ArrayAdapter<String> adapter = projectDirectoryAdapter();
@@ -487,7 +540,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             String fileName=spinner.getSelectedItem().toString();
-                            if (fileName!=null) {
+                            if (fileName != null) {
                                 UmlType.clearProjectUmlTypes();
                                 mProject = UmlProject.load(getApplicationContext(), fileName);
                                 mGraphView.setUmlProject(mProject);
@@ -502,7 +555,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         }
     }
 
-    private void drawerMenuDeleteProject() {
+    private void toolbarMenuDeleteProject() {
         final Context context=this;
         final Spinner spinner=new Spinner(context);
         ArrayAdapter<String> adapter = projectDirectoryAdapter();
@@ -555,7 +608,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         }
     }
 
-    private void drawerMenuMerge() {
+    private void toolbarMenuMerge() {
         final Context context =this;
         final Spinner spinner=new Spinner(context);
         ArrayAdapter<String> adapter = projectDirectoryAdapter();
@@ -640,18 +693,22 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
 //    **********************************************************************************************
 //    Menu item called methods
+//    TODO: Remove deprecated API + find alternatives
 //    **********************************************************************************************
-
     private void menuItemExport() {
         Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.setType("text/*");
-        startActivityForResult(intent, INTENT_CREATE_DOCUMENT_EXPORT_PROJECT);
+//        startActivityForResult(intent, INTENT_CREATE_DOCUMENT_EXPORT_PROJECT);
+        intent.putExtra("intent", INTENT_CREATE_DOCUMENT_EXPORT_PROJECT);
+        mStartForResult.launch(intent);
     }
 
     private void menuItemImport() {
         Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
-        startActivityForResult(intent, INTENT_OPEN_DOCUMENT_IMPORT_PROJECT);
+//        startActivityForResult(intent, INTENT_OPEN_DOCUMENT_IMPORT_PROJECT);
+        intent.putExtra("intent", INTENT_OPEN_DOCUMENT_IMPORT_PROJECT);
+        mStartForResult.launch(intent);
     }
 
     private void menuCreateCustomType() {
@@ -727,15 +784,19 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
     }
 
     private void menuExportCustomTypes() {
-        Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.setType("text/*");
-        startActivityForResult(intent,INTENT_CREATE_DOCUMENT_EXPORT_CUSTOM_TYPES);
+//        startActivityForResult(intent,INTENT_CREATE_DOCUMENT_EXPORT_CUSTOM_TYPES);
+        intent.putExtra("intent", INTENT_CREATE_DOCUMENT_EXPORT_CUSTOM_TYPES);
+        mStartForResult.launch(intent);
     }
 
     private void menuImportCustomTypes() {
-        Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
-        startActivityForResult(intent,INTENT_OPEN_DOCUMENT_IMPORT_CUSTOM_TYPES);
+//        startActivityForResult(intent,INTENT_OPEN_DOCUMENT_IMPORT_CUSTOM_TYPES);
+        intent.putExtra("intent", INTENT_OPEN_DOCUMENT_IMPORT_CUSTOM_TYPES);
+        mStartForResult.launch(intent);
     }
 
     private void menuHelp() {
@@ -756,26 +817,25 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 //    Intents
 //    **********************************************************************************************
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-
-        if (requestCode == INTENT_CREATE_DOCUMENT_EXPORT_PROJECT && resultCode == RESULT_OK) {
-            Uri fileNameUri=data.getData();
-            mProject.exportProject(this,fileNameUri);
-        } else if (requestCode == INTENT_OPEN_DOCUMENT_IMPORT_PROJECT && resultCode == RESULT_OK) {
-            Uri fileNameUri=data.getData();
-            UmlType.clearProjectUmlTypes();
-            mProject=UmlProject.importProject(this,fileNameUri);
-            mGraphView.setUmlProject(mProject);
-        } else if (requestCode == INTENT_CREATE_DOCUMENT_EXPORT_CUSTOM_TYPES && resultCode == RESULT_OK) {
-            Uri fileNameUri=data.getData();
-            UmlType.exportCustomUmlTypes(this,fileNameUri);
-        } else if (requestCode == INTENT_OPEN_DOCUMENT_IMPORT_CUSTOM_TYPES && resultCode == RESULT_OK) {
-            Uri fileNameUri=data.getData();
-            UmlType.importCustomUmlTypes(this,fileNameUri);
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        if (requestCode == INTENT_CREATE_DOCUMENT_EXPORT_PROJECT && resultCode == RESULT_OK) {
+//            Uri fileNameUri=data.getData();
+//            mProject.exportProject(this,fileNameUri);
+//        } else if (requestCode == INTENT_OPEN_DOCUMENT_IMPORT_PROJECT && resultCode == RESULT_OK) {
+//            Uri fileNameUri=data.getData();
+//            UmlType.clearProjectUmlTypes();
+//            mProject=UmlProject.importProject(this,fileNameUri);
+//            mGraphView.setUmlProject(mProject);
+//        } else if (requestCode == INTENT_CREATE_DOCUMENT_EXPORT_CUSTOM_TYPES && resultCode == RESULT_OK) {
+//            Uri fileNameUri=data.getData();
+//            UmlType.exportCustomUmlTypes(this,fileNameUri);
+//        } else if (requestCode == INTENT_OPEN_DOCUMENT_IMPORT_CUSTOM_TYPES && resultCode == RESULT_OK) {
+//            Uri fileNameUri=data.getData();
+//            UmlType.importCustomUmlTypes(this,fileNameUri);
+//        }
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
