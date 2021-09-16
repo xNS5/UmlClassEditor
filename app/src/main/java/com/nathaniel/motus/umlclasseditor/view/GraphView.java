@@ -147,8 +147,8 @@ public class GraphView extends View implements View.OnTouchListener{
         float zoom=attr.getFloat(R.styleable.GraphView_zoom,-1);
         int xOffset=attr.getInt(R.styleable.GraphView_xOffset,-1);
         int yOffset=attr.getInt(R.styleable.GraphView_yOffset,-1);
-
         init(zoom,xOffset,yOffset);
+        attr.recycle();
     }
 
 //    **********************************************************************************************

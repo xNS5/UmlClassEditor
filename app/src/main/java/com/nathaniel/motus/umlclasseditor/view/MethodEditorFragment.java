@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -215,7 +216,7 @@ public class MethodEditorFragment extends EditorFragment implements View.OnClick
                     break;
             }
 
-            mDimEdit.setText(Integer.toString(mUmlClassMethod.getArrayDimension()));
+            mDimEdit.setText(String.format(Locale.getDefault(), "%d", mUmlClassMethod.getArrayDimension()));
             if (mUmlClassMethod.getTypeMultiplicity() == TypeMultiplicity.ARRAY)
                 setOnArrayDisplay();
             else setOnSingleDisplay();
@@ -268,12 +269,12 @@ public class MethodEditorFragment extends EditorFragment implements View.OnClick
     }
 
     private void setOnEditDisplay() {
-        mEditMethodText.setText("Edit method");
+        mEditMethodText.setText(getContext().getString(R.string.edit_method_string));
         mDeleteMethodButton.setVisibility(View.VISIBLE);
     }
 
     private void setOnCreateDisplay() {
-        mEditMethodText.setText("Create method");
+        mEditMethodText.setText(getContext().getString(R.string.create_method_string));
         mDeleteMethodButton.setVisibility(View.INVISIBLE);
     }
 
@@ -338,9 +339,9 @@ public class MethodEditorFragment extends EditorFragment implements View.OnClick
         ExpandableListView expandableListView=(ExpandableListView)view.getParent();
         long pos=expandableListView.getExpandableListPosition(position);
 
-        int itemType=expandableListView.getPackedPositionType(pos);
-        int groupPos=expandableListView.getPackedPositionGroup(pos);
-        int childPos=expandableListView.getPackedPositionChild(pos);
+        int itemType= ExpandableListView.getPackedPositionType(pos);
+        int groupPos= ExpandableListView.getPackedPositionGroup(pos);
+        int childPos= ExpandableListView.getPackedPositionChild(pos);
 
         AdapterItem item=(AdapterItem)expandableListView.getExpandableListAdapter().getChild(groupPos,childPos);
 
