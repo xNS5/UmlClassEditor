@@ -4,7 +4,7 @@ UML Class Editor
 This app allows you to design an app using UML when you are away from a desktop. Features:
 
 * Main UML notations for Java classes
-* lass/attribute/method editor
+* Class/attribute/method editor
 * Java class, abstract class, interface, enum
 * Built-in primitive types
 * Custom types
