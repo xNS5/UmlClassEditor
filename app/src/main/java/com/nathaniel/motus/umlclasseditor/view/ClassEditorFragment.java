@@ -253,12 +253,12 @@ public class ClassEditorFragment extends EditorFragment implements View.OnClickL
     }
 
     private void setOnEditDisplay() {
-        mEditClassText.setText("Edit class");
+        mEditClassText.setText(getContext().getString(R.string.edit_class_string));
         mDeleteClassButton.setVisibility(View.VISIBLE);
     }
 
     private void setOnCreateDisplay() {
-        mEditClassText.setText("Create class");
+        mEditClassText.setText(getContext().getString(R.string.create_class_string));
         mDeleteClassButton.setVisibility(View.INVISIBLE);
     }
 
