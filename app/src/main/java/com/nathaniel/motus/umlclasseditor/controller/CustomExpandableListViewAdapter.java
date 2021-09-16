@@ -68,10 +68,10 @@ public class CustomExpandableListViewAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
         String title=this.mGroups.get(i);
         if (view == null) {
-            LayoutInflater layoutInflater=(LayoutInflater)this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view=layoutInflater.inflate(R.layout.list_group,null);
+            LayoutInflater layoutInflater = (LayoutInflater)this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = layoutInflater.inflate(R.layout.list_group,viewGroup, false);
         }
-        TextView textViewGroup=view.findViewById(R.id.group_text);
+        TextView textViewGroup = view.findViewById(R.id.group_text);
         textViewGroup.setText(title);
         return view;
     }
@@ -80,8 +80,8 @@ public class CustomExpandableListViewAdapter extends BaseExpandableListAdapter {
     public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
         String item=((AdapterItem) this.getChild(i,i1)).getName();
         if (view == null) {
-            LayoutInflater layoutInflater=(LayoutInflater)this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view=layoutInflater.inflate(R.layout.list_item,null);
+            LayoutInflater layoutInflater = (LayoutInflater)this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = layoutInflater.inflate(R.layout.list_item, viewGroup, false);
         }
         TextView childText=view.findViewById(R.id.child_text);
         childText.setText(item);
