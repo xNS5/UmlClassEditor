@@ -14,6 +14,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -633,7 +634,8 @@ public class GraphView extends View implements View.OnTouchListener{
                         mGraphFragment.setStartClass(getTouchedClass(mLastTouchX,mLastTouchY));
                         mGraphFragment.setExpectingStartClass(false);
                         mGraphFragment.setExpectingEndClass(true);
-                        mGraphFragment.setPrompt("Choose end class");
+//                        mGraphFragment.setPrompt("Choose end class");
+                        Toast.makeText(getContext(), "Choose end class", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;

@@ -31,9 +31,11 @@ import androidx.activity.result.*;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.core.view.MenuCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -61,12 +63,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements FragmentObserver,
-        GraphView.GraphViewObserver
-        /*NavigationView.OnNavigationItemSelectedListener*/{
+        GraphView.GraphViewObserver,
+        NavigationView.OnNavigationItemSelectedListener{
 
     private UmlProject mProject;
     private DrawerLayout mDrawerLayout;
-//    private NavigationView mNavigationView;
+    private Toolbar mToolbar;
+    private NavigationView mNavigationView;
     private TextView mMenuHeaderProjectNameText;
 
     private static boolean sWriteExternalStoragePermission =true;
@@ -102,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
     private static final int REQUEST_PERMISSION=5000;
 
     private GraphView mGraphView;
-    private final ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+    private ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
@@ -157,10 +160,8 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         UmlType.initializeCustomUmlTypes(this);
         getPreferences();
         configureToolbar();
-        // this locks the drawer shut without completely disabling it
-
         configureDrawerLayout();
-//        configureNavigationView();
+        configureNavigationView();
         configureAndDisplayGraphFragment(R.id.activity_main_frame);
         createOnBackPressedCallback();
         setOnBackPressedCallback();
@@ -212,25 +213,25 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 //    **********************************************************************************************
 
     private void configureToolbar() {
-        Toolbar mToolbar = findViewById(R.id.main_activity_toolbar);
+        mToolbar = findViewById(R.id.main_activity_toolbar);
         setSupportActionBar(mToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
     }
 
     private void configureDrawerLayout() {
         mDrawerLayout=findViewById(R.id.activity_main_drawer);
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        mDrawerLayout.addDrawerListener(toggle);
-//        toggle.syncState();
+//        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
     }
-//
-//    private void configureNavigationView() {
-//        mNavigationView=findViewById(R.id.activity_main_navigation_view);
-//        mMenuHeaderProjectNameText= mNavigationView.getHeaderView(0).findViewById(R.id.activity_main_navigation_view_header_project_name_text);
-//        updateNavigationView();
-//        mNavigationView.setNavigationItemSelectedListener(this);
-//    }
+
+    private void configureNavigationView() {
+        mNavigationView=findViewById(R.id.activity_main_navigation_view);
+        mMenuHeaderProjectNameText= mNavigationView.getHeaderView(0).findViewById(R.id.activity_main_navigation_view_header_project_name_text);
+        updateNavigationView();
+        mNavigationView.setNavigationItemSelectedListener(this);
+    }
 
     private void updateNavigationView() {
         mMenuHeaderProjectNameText.setText(mProject.getName());
@@ -267,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         this.getOnBackPressedDispatcher().addCallback(this,mOnBackPressedCallback);
     }
 
+    // TODO: Make double tap/back customizable
     private void onBackButtonPressed() {
         long DOUBLE_BACK_PRESSED_DELAY = 2000;
         if (Calendar.getInstance().getTimeInMillis() - mFirstBackPressedTime > DOUBLE_BACK_PRESSED_DELAY) {
@@ -458,25 +460,23 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 //    **********************************************************************************************
 //    Navigation view events
 //    **********************************************************************************************
-
-//    @Override
-//    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//        int menuId=item.getItemId();
-//        if (menuId == R.id.toolbar_menu_new_project) {
-//            toolbarMenuNewProject();
-//        } else if (menuId == R.id.toolbar_menu_load_project) {
-//            toolbarMenuLoadProject();
-//        } else if (menuId == R.id.toolbar_menu_save_as) {
-//            toolbarMenuSaveAs();
-//        } else if (menuId == R.id.toolbar_menu_merge_project) {
-//            toolbarMenuMerge();
-//        } else if (menuId == R.id.toolbar_menu_delete_project) {
-//            toolbarMenuDeleteProject();
-//        }
-//        this.mDrawerLayout.closeDrawer(GravityCompat.START);
-//
-//        return true;
-//    }
+    // TODO Fix issue with creating + saving new projects. Narrowed it down to here.
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int menuId=item.getItemId();
+        if (menuId == R.id.toolbar_menu_new_project) {
+            toolbarMenuNewProject();
+        } else if (menuId == R.id.toolbar_menu_load_project) {
+            toolbarMenuLoadProject();
+        } else if (menuId == R.id.toolbar_menu_save_as) {
+            toolbarMenuSaveAs();
+        } else if (menuId == R.id.toolbar_menu_merge_project) {
+            toolbarMenuMerge();
+        } else if (menuId == R.id.toolbar_menu_delete_project) {
+            toolbarMenuDeleteProject();
+        }
+        return true;
+    }
 
 //    **********************************************************************************************
 //    Navigation view called methods

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nathaniel.motus.umlclasseditor.R;
 import com.nathaniel.motus.umlclasseditor.controller.FragmentObserver;
@@ -221,7 +222,8 @@ public class GraphFragment extends Fragment implements View.OnClickListener {
 
             case NEW_CLASS_BUTTON_TAG:
                 this.setExpectingTouchLocation(true);
-                this.setPrompt("Locate the new class");
+//                this.setPrompt("Locate the new class");
+                Toast.makeText(getContext(), "Tap where the new class should go", Toast.LENGTH_LONG).show();
                 break;
 
             case INHERITANCE_BUTTON_TAG:
@@ -262,7 +264,8 @@ public class GraphFragment extends Fragment implements View.OnClickListener {
         this.setExpectingStartClass(true);
         this.setExpectingEndClass(false);
         this.setUmlRelationType(relationType);
-        this.setPrompt("Choose start class");
+//        this.setPrompt("Choose start class");
+        Toast.makeText(getContext(), "Choose start class", Toast.LENGTH_SHORT).show();
     }
 
     private void clearInput() {

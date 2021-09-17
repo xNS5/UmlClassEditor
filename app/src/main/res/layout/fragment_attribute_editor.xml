@@ -13,29 +13,34 @@
         android:gravity="center"
         tools:context=".view.ClassEditorFragment">
 
-        <CheckBox
-            android:id="@+id/attribute_static_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/attribute_visibility_radio_group"
-            android:layout_alignStart="@id/attribute_visibility_radio_group"
-            android:layout_marginEnd="20sp"
-            android:layout_marginBottom="20sp"
-            android:minHeight="48dp"
-            android:text="@string/static_string"
-            android:textSize="18sp" />
+        <LinearLayout
+            android:id="@+id/attribute_state_container"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/attribute_visibility_radio_group"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-        <CheckBox
-            android:id="@+id/attribute_final_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/attribute_static_check"
-            android:layout_marginEnd="20sp"
-            android:layout_marginBottom="20sp"
-            android:layout_toEndOf="@id/attribute_static_check"
-            android:minHeight="48dp"
-            android:text="@string/final_string"
-            android:textSize="18sp" />
+            <CheckBox
+                android:id="@+id/attribute_static_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20sp"
+                android:layout_marginBottom="20sp"
+                android:minHeight="48dp"
+                android:text="@string/static_string"
+                android:textSize="18sp" />
+
+            <CheckBox
+                android:id="@+id/attribute_final_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20sp"
+                android:layout_marginBottom="20sp"
+                android:minHeight="48dp"
+                android:text="@string/final_string"
+                android:textSize="18sp" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/attribute_name_input"
@@ -77,6 +82,7 @@
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/baseline_cancel_black_18dp"
                 android:text="@string/cancel"
+                android:textColor="#000000"
                 android:textSize="18sp" />
 
             <Button
@@ -87,6 +93,7 @@
                 android:drawableStart="@drawable/baseline_delete_forever_black_18dp"
                 android:text="@string/del"
 
+                android:textColor="#000000"
                 android:textSize="18sp" />
 
             <Button
@@ -96,6 +103,7 @@
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/baseline_check_black_18dp"
                 android:text="@string/ok"
+                android:textColor="#000000"
                 android:textSize="18sp" />
 
         </LinearLayout>
@@ -116,6 +124,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="5sp"
+                android:buttonTint="@color/radioButtonColor"
                 android:checked="true"
                 android:text="@string/public_string"
                 android:textSize="18sp" />
@@ -125,6 +134,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="5sp"
+                android:buttonTint="@color/radioButtonColor"
                 android:text="@string/protected_string"
                 android:textSize="18sp" />
 
@@ -133,6 +143,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="5sp"
+                android:buttonTint="@color/radioButtonColor"
                 android:text="@string/private_string"
                 android:textSize="18sp"
                 tools:ignore="TouchTargetSizeCheck" />
@@ -155,7 +166,9 @@
                 android:checked="true"
                 android:minHeight="48dp"
                 android:text="@string/single"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:buttonTint="@color/radioButtonColor"
+                />
 
             <RadioButton
                 android:id="@+id/attribute_collection_radio"
@@ -164,7 +177,9 @@
                 android:layout_marginBottom="10sp"
                 android:minHeight="48dp"
                 android:text="@string/collection"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:buttonTint="@color/radioButtonColor"
+                />
 
             <RadioButton
                 android:id="@+id/attribute_array_radio"
@@ -173,7 +188,9 @@
                 android:layout_marginBottom="10sp"
                 android:minHeight="48dp"
                 android:text="@string/array"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:buttonTint="@color/radioButtonColor"
+                />
         </RadioGroup>
 
         <Spinner
@@ -210,8 +227,8 @@
             android:id="@+id/attribute_type_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/attribute_static_check"
-            android:layout_alignStart="@id/attribute_static_check"
+            android:layout_below="@id/attribute_state_container"
+            android:layout_alignStart="@id/attribute_state_container"
             android:layout_marginBottom="20sp"
             android:text="@string/type_string"
             android:textSize="18sp" />

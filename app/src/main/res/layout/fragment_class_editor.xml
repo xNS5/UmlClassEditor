@@ -11,19 +11,18 @@
     tools:context=".view.ClassEditorFragment"
     android:layout_margin="5dp">
 
-    <EditText
+    <TextView
         android:id="@+id/edit_class_text"
-        android:labelFor="@+id/edit_class_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="20sp"
-        android:inputType="number"
+        android:importantForAutofill="no"
+        android:labelFor="@+id/edit_class_text"
         android:minHeight="48dp"
         android:text="@string/edit_class_string"
-        android:textSize="20sp"
-        android:importantForAutofill="no" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/class_name_text"
@@ -49,7 +48,7 @@
         android:labelFor="@+id/class_name_input"
         android:minHeight="48dp"
         android:textSize="18sp"
-        tools:ignore="TextContrastCheck" />
+        />
 
     <RadioGroup
         android:id="@+id/class_type_radio_group"
@@ -58,13 +57,19 @@
         android:layout_below="@id/class_name_input"
         android:layout_alignStart="@id/class_name_text"
         android:layout_marginBottom="10sp"
-        android:gravity="center"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
+        </LinearLayout>
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
             <RadioButton
                 android:id="@+id/class_java_radio"
                 android:layout_width="wrap_content"
@@ -73,8 +78,8 @@
                 android:labelFor="@+id/class_java_radio"
                 android:minHeight="48dp"
                 android:text="@string/java_class"
-                android:textSize="18sp" />
-
+                android:textSize="18sp"
+                android:buttonTint="@color/radioButtonColor"/>
             <RadioButton
                 android:id="@+id/class_abstract_radio"
                 android:layout_width="wrap_content"
@@ -82,14 +87,8 @@
                 android:labelFor="@+id/class_abstract_radio"
                 android:minHeight="48dp"
                 android:text="@string/abstract_class"
-                android:textSize="18sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
+                android:textSize="18sp"
+                android:buttonTint="@color/radioButtonColor"/>
             <RadioButton
                 android:id="@+id/class_interface_radio"
                 android:layout_width="wrap_content"
@@ -97,7 +96,8 @@
                 android:labelFor="@+id/class_interface_radio"
                 android:minHeight="48dp"
                 android:text="@string/interface_string"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:buttonTint="@color/radioButtonColor"/>
 
             <RadioButton
                 android:id="@+id/class_enum_radio"
@@ -106,8 +106,9 @@
                 android:labelFor="@+id/class_enum_radio"
                 android:minHeight="48dp"
                 android:text="@string/enum_string"
-                android:textSize="18sp" />
-        </LinearLayout>
+                android:textSize="18sp"
+                android:buttonTint="@color/radioButtonColor"/>
+        </RadioGroup>
     </RadioGroup>
 
     <ExpandableListView
@@ -128,32 +129,35 @@
 
         <Button
             android:id="@+id/class_cancel_button"
-            android:labelFor="@+id/class_cancel_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/baseline_cancel_black_18dp"
+            android:labelFor="@+id/class_cancel_button"
             android:text="@string/cancel"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/class_ok_button"
-            android:labelFor="@+id/class_ok_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/baseline_delete_forever_black_18dp"
-            android:text="@string/del"
+            android:textColor="#000000"
             android:textSize="18sp" />
 
         <Button
             android:id="@+id/delete_class_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/baseline_delete_forever_black_18dp"
             android:labelFor="@+id/delete_class_button"
+            android:text="@string/del"
+            android:textColor="#000000"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/class_ok_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/baseline_check_black_18dp"
+            android:labelFor="@+id/class_ok_button"
             android:text="@string/ok"
+            android:textColor="#000000"
             android:textSize="18sp" />
     </LinearLayout>
 
