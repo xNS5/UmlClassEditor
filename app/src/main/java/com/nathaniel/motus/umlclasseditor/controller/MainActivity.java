@@ -220,10 +220,10 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
     private void configureDrawerLayout() {
         mDrawerLayout=findViewById(R.id.activity_main_drawer);
-//        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        mDrawerLayout.addDrawerListener(toggle);
+//        toggle.syncState();
     }
 
     private void configureNavigationView() {
@@ -663,26 +663,39 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         int itemId = menuItem.getItemId();
-        if (itemId == R.id.toolbar_menu_export) {
-            if(sWriteExternalStoragePermission)
-                menuItemExport();
-        } else if (itemId == R.id.toolbar_menu_import) {
-            if (sReadExternalStoragePermission)
-                menuItemImport();
-        } else if (itemId == R.id.toolbar_menu_create_custom_type) {
-            menuCreateCustomType();
-        } else if (itemId == R.id.toolbar_menu_delete_custom_types) {
-            menuDeleteCustomTypes();
-        } else if (itemId == R.id.toolbar_menu_export_custom_types) {
-            if (sWriteExternalStoragePermission)
-                menuExportCustomTypes();
-        } else if (itemId == R.id.toolbar_menu_import_custom_types) {
-            if (sReadExternalStoragePermission)
-                menuImportCustomTypes();
-        } else if (itemId == R.id.toolbar_menu_help) {
-            menuHelp();
+        if(itemId != R.id.project_menu || itemId != R.id.type_menu){
+            if (itemId == R.id.toolbar_menu_new_project) {
+                toolbarMenuNewProject();
+            } else if (itemId == R.id.toolbar_menu_load_project) {
+                toolbarMenuLoadProject();
+            } else if (itemId == R.id.toolbar_menu_save_as) {
+                toolbarMenuSaveAs();
+            } else if (itemId == R.id.toolbar_menu_merge_project) {
+                toolbarMenuMerge();
+            } else if (itemId == R.id.toolbar_menu_delete_project) {
+                toolbarMenuDeleteProject();
+            } else if (itemId == R.id.toolbar_menu_export) {
+                if(sWriteExternalStoragePermission)
+                    menuItemExport();
+            } else if (itemId == R.id.toolbar_menu_import) {
+                if (sReadExternalStoragePermission)
+                    menuItemImport();
+            } else if (itemId == R.id.toolbar_menu_create_custom_type) {
+                menuCreateCustomType();
+            } else if (itemId == R.id.toolbar_menu_delete_custom_types) {
+                menuDeleteCustomTypes();
+            } else if (itemId == R.id.toolbar_menu_export_custom_types) {
+                if (sWriteExternalStoragePermission)
+                    menuExportCustomTypes();
+            } else if (itemId == R.id.toolbar_menu_import_custom_types) {
+                if (sReadExternalStoragePermission)
+                    menuImportCustomTypes();
+            } else if (itemId == R.id.toolbar_menu_help) {
+                menuHelp();
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
 //    **********************************************************************************************
