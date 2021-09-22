@@ -211,6 +211,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginBottom="20sp"
             android:text="@string/edit_attribute"
+            android:textColor="@android:color/black"
             android:textSize="20sp" />
 
         <TextView
@@ -221,6 +222,7 @@
             android:layout_alignStart="@id/edit_attribute_text"
             android:layout_marginBottom="20sp"
             android:text="@string/name"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <TextView
@@ -231,6 +233,7 @@
             android:layout_alignStart="@id/attribute_state_container"
             android:layout_marginBottom="20sp"
             android:text="@string/type_string"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <TextView
@@ -241,6 +244,7 @@
             android:layout_toEndOf="@id/attribute_multiplicity_radio_group"
             android:paddingBottom="24sp"
             android:text="@string/dimension"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
     </RelativeLayout>
