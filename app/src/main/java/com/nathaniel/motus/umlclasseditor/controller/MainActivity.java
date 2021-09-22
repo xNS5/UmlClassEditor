@@ -17,8 +17,10 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -63,14 +65,14 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements FragmentObserver,
-        GraphView.GraphViewObserver,
-        NavigationView.OnNavigationItemSelectedListener{
+        GraphView.GraphViewObserver/*,
+        NavigationView.OnNavigationItemSelectedListener*/{
 
     private UmlProject mProject;
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
     private NavigationView mNavigationView;
-    private TextView mMenuHeaderProjectNameText;
+//    private TextView mMenuHeaderProjectNameText;
 
     private static boolean sWriteExternalStoragePermission =true;
     private static boolean sReadExternalStoragePermission=true;
@@ -160,8 +162,11 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         UmlType.initializeCustomUmlTypes(this);
         getPreferences();
         configureToolbar();
+
+/*
         configureDrawerLayout();
         configureNavigationView();
+*/
         configureAndDisplayGraphFragment(R.id.activity_main_frame);
         createOnBackPressedCallback();
         setOnBackPressedCallback();
@@ -212,30 +217,44 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 //    Configuration methods
 //    **********************************************************************************************
 
+//  android:label="@string/app_name"
     private void configureToolbar() {
         mToolbar = findViewById(R.id.main_activity_toolbar);
+        Button title_button = (Button)mToolbar.findViewById(R.id.title_button);
+        title_button.setText(mProject.getName());
+        mToolbar.findViewById(R.id.title_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                toolbarMenuSaveAs();
+            }
+        });
         setSupportActionBar(mToolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void configureDrawerLayout() {
+    /*
+    * Commented out the functions regarding the nav drawer.
+    * */
+/*     private void configureDrawerLayout() {
         mDrawerLayout=findViewById(R.id.activity_main_drawer);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        mDrawerLayout.addDrawerListener(toggle);
-//        toggle.syncState();
-    }
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+    }*/
 
-    private void configureNavigationView() {
+/*    private void configureNavigationView() {
         mNavigationView=findViewById(R.id.activity_main_navigation_view);
         mMenuHeaderProjectNameText= mNavigationView.getHeaderView(0).findViewById(R.id.activity_main_navigation_view_header_project_name_text);
         updateNavigationView();
         mNavigationView.setNavigationItemSelectedListener(this);
-    }
+    }*/
 
+/*
     private void updateNavigationView() {
         mMenuHeaderProjectNameText.setText(mProject.getName());
     }
+*/
 
     private void savePreferences() {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
@@ -275,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
             mFirstBackPressedTime=Calendar.getInstance().getTimeInMillis();
             Toast.makeText(this,"Press back again to leave",Toast.LENGTH_SHORT).show();
         }else
-            finish();
+        finish();
     }
 
 //    **********************************************************************************************
@@ -293,7 +312,6 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
     private void configureAndDisplayClassEditorFragment(int viewContainerId,float xLocation,float yLocation,int classOrder) {
         //handle class editor fragment
-
         if (mClassEditorFragment==null) {
             mClassEditorFragment = ClassEditorFragment.newInstance(xLocation, yLocation, classOrder);
             getSupportFragmentManager().beginTransaction()
@@ -460,23 +478,22 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 //    **********************************************************************************************
 //    Navigation view events
 //    **********************************************************************************************
-    // TODO Fix issue with creating + saving new projects. Narrowed it down to here.
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int menuId=item.getItemId();
-        if (menuId == R.id.toolbar_menu_new_project) {
-            toolbarMenuNewProject();
-        } else if (menuId == R.id.toolbar_menu_load_project) {
-            toolbarMenuLoadProject();
-        } else if (menuId == R.id.toolbar_menu_save_as) {
-            toolbarMenuSaveAs();
-        } else if (menuId == R.id.toolbar_menu_merge_project) {
-            toolbarMenuMerge();
-        } else if (menuId == R.id.toolbar_menu_delete_project) {
-            toolbarMenuDeleteProject();
-        }
-        return true;
-    }
+//    @Override
+//    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//        int menuId=item.getItemId();
+//        if (menuId == R.id.toolbar_menu_new_project) {
+//            toolbarMenuNewProject();
+//        } else if (menuId == R.id.toolbar_menu_load_project) {
+//            toolbarMenuLoadProject();
+//        } else if (menuId == R.id.toolbar_menu_save_as) {
+//            toolbarMenuSaveAs();
+//        } else if (menuId == R.id.toolbar_menu_merge_project) {
+//            toolbarMenuMerge();
+//        } else if (menuId == R.id.toolbar_menu_delete_project) {
+//            toolbarMenuDeleteProject();
+//        }
+//        return true;
+//    }
 
 //    **********************************************************************************************
 //    Navigation view called methods
@@ -484,10 +501,9 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
     private void toolbarMenuSaveAs() {
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        final EditText editText=new EditText(this);
+        final EditText editText = new EditText(this);
         editText.setText(mProject.getName());
-        builder.setTitle("Save as")
-                .setMessage("Enter new name :")
+        builder.setTitle("Save Project")
                 .setView(editText)
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
@@ -506,9 +522,18 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
     private void toolbarMenuNewProject() {
         mProject.save(this);
         UmlType.clearProjectUmlTypes();
-        mProject=new UmlProject("NewProject",this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final EditText editText = new EditText(this);
+        editText.setPadding(50, 25, 25, 25);
+        editText.setHint("Project Name");
+        builder.setTitle("New Project")
+                .setView(editText)
+                .setNegativeButton("CANCEL", (dialogInterface, i) -> {})
+                .setPositiveButton("OK", (dialogInterface, i) -> mProject = new UmlProject(editText.getText().toString(), mProject.getContext()))
+                .create()
+                .show();
         mGraphView.setUmlProject(mProject);
-        updateNavigationView();
+//        updateNavigationView();
     }
 
     private void toolbarMenuLoadProject() {
@@ -538,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
                                 UmlType.clearProjectUmlTypes();
                                 mProject = UmlProject.load(getApplicationContext(), fileName);
                                 mGraphView.setUmlProject(mProject);
-                                updateNavigationView();
+//                                updateNavigationView();
                             }
                         }
                     })
@@ -661,37 +686,47 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 //    Option menu events
 //    **********************************************************************************************
 
+    @SuppressLint("NonConstantResourceId")
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         int itemId = menuItem.getItemId();
-        if(itemId != R.id.project_menu || itemId != R.id.type_menu){
-            if (itemId == R.id.toolbar_menu_new_project) {
-                toolbarMenuNewProject();
-            } else if (itemId == R.id.toolbar_menu_load_project) {
-                toolbarMenuLoadProject();
-            } else if (itemId == R.id.toolbar_menu_save_as) {
-                toolbarMenuSaveAs();
-            } else if (itemId == R.id.toolbar_menu_merge_project) {
-                toolbarMenuMerge();
-            } else if (itemId == R.id.toolbar_menu_delete_project) {
-                toolbarMenuDeleteProject();
-            } else if (itemId == R.id.toolbar_menu_export) {
-                if(sWriteExternalStoragePermission)
-                    menuItemExport();
-            } else if (itemId == R.id.toolbar_menu_import) {
-                if (sReadExternalStoragePermission)
+        if((itemId != R.id.project_menu || itemId != R.id.type_menu) && sReadExternalStoragePermission){
+            switch(itemId) {
+                case R.id.toolbar_menu_new_project:
+                    toolbarMenuNewProject();
+                    break;
+                case R.id.toolbar_menu_load_project:
+                    toolbarMenuLoadProject();
+                    break;
+                case R.id.toolbar_menu_save_as:
+                    toolbarMenuSaveAs();
+                    break;
+                case R.id.toolbar_menu_merge_project:
+                    toolbarMenuMerge();
+                    break;
+                case R.id.toolbar_menu_delete_project:
+                    toolbarMenuDeleteProject();
+                    break;
+                case R.id.toolbar_menu_export:
                     menuItemImport();
-            } else if (itemId == R.id.toolbar_menu_create_custom_type) {
-                menuCreateCustomType();
-            } else if (itemId == R.id.toolbar_menu_delete_custom_types) {
-                menuDeleteCustomTypes();
-            } else if (itemId == R.id.toolbar_menu_export_custom_types) {
-                if (sWriteExternalStoragePermission)
+                    break;
+                case R.id.toolbar_menu_import:
+                    menuItemExport();
+                    break;
+                case R.id.toolbar_menu_create_custom_type:
+                    menuCreateCustomType();
+                    break;
+                case R.id.toolbar_menu_delete_custom_types:
+                    menuDeleteCustomTypes();
+                    break;
+                case R.id.toolbar_menu_export_custom_types:
                     menuExportCustomTypes();
-            } else if (itemId == R.id.toolbar_menu_import_custom_types) {
-                if (sReadExternalStoragePermission)
+                    break;
+                case R.id.toolbar_menu_import_custom_types:
                     menuImportCustomTypes();
-            } else if (itemId == R.id.toolbar_menu_help) {
-                menuHelp();
+                    break;
+                case R.id.toolbar_menu_help:
+                    menuHelp();
+                    break;
             }
             return true;
         }
@@ -864,7 +899,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
     private void saveAs(String projectName) {
         mProject.setName(projectName);
-        updateNavigationView();
+//        updateNavigationView();
         mProject.save(getApplicationContext());
     }
 

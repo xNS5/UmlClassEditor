@@ -18,6 +18,7 @@ public class UmlProject {
 
     private String mName;
     private ArrayList<UmlClass> mUmlClasses;
+    private Context mContext;
     private int mUmlClassCount;
     private ArrayList<UmlRelation> mUmlRelations;
     private int mAppVersionCode;
@@ -42,9 +43,10 @@ public class UmlProject {
 
     public UmlProject(String name,Context context) {
         mName = name;
-        mUmlClasses=new ArrayList<UmlClass>();
+        mUmlClasses=new ArrayList<>();
         mUmlClassCount=0;
-        mUmlRelations=new ArrayList<UmlRelation>();
+        mUmlRelations=new ArrayList<>();
+        mContext = context;
     }
 
 //    **********************************************************************************************
@@ -123,7 +125,6 @@ public class UmlProject {
 //    **********************************************************************************************
 //    Initialization
 //    **********************************************************************************************
-
 //    **********************************************************************************************
 //    Modifiers
 //    **********************************************************************************************
@@ -197,28 +198,23 @@ public class UmlProject {
     public boolean relationAlreadyExistsBetween(UmlClass firstClass, UmlClass secondClass) {
         //check whether there already is a relation between two classes
         //this test is not oriented
-        boolean test=false;
-
         for (UmlRelation r : this.getUmlRelations())
-            if ((r.getRelationOriginClass()==firstClass && r.getRelationEndClass()==secondClass)
-                    || (r.getRelationOriginClass()==secondClass && r.getRelationEndClass()==firstClass))
-                test=true;
-        return test;
+            if ((r.getRelationOriginClass()==firstClass && r.getRelationEndClass()==secondClass) || (r.getRelationOriginClass()==secondClass && r.getRelationEndClass()==firstClass))
+                return true;
+        return false;
     }
 
     public boolean hasConflictNameWith(UmlClass umlClass) {
-        boolean test=false;
         for (UmlClass c:mUmlClasses)
-            if (c.getName().compareTo(umlClass.getName())==0) test=true;
-        return test;
+            if (c.getName().compareTo(umlClass.getName())==0)
+                return true;
+        return false;
     }
 
     public boolean containsClassNamed(String className) {
         //check whether a class with className already exists in this project
-
         for (UmlClass c:this.getUmlClasses())
             if (c.getName()!=null && c.getName().equals(className)) return true;
-
         return false;
     }
 
@@ -319,9 +315,21 @@ public class UmlProject {
 //    Save and load project methods
 //    **********************************************************************************************
 
+    public Context getContext(){
+        return this.mContext;
+    }
+
+    public void setContext(Context context){
+        this.mContext = context;
+    }
+
     public void save(Context context) {
         File destination=new File(context.getFilesDir(),PROJECT_DIRECTORY);
-        if (!destination.exists()) destination.mkdir();
+        if (!destination.exists()){
+            if(!destination.mkdir()){
+                Log.i("UMLPROJECT.JAVA: ERROR", "Unable to create directory");
+            }
+        }
         IOUtils.saveFileToInternalStorage(this.toJSONObject(context).toString(),new File(destination,mName));
     }
 
@@ -344,6 +352,7 @@ public class UmlProject {
         UmlProject umlProject;
         try {
             umlProject=UmlProject.fromJSONObject(new JSONObject(IOUtils.readFileFromExternalStorage(context,fromFileUri)),context);
+            assert umlProject != null;
             for (UmlClass c : umlProject.getUmlClasses()) {
                 while (UmlType.containsPrimitiveUmlTypeNamed(c.getName()))
                     c.setName(c.getName()+"(1)");
@@ -351,7 +360,7 @@ public class UmlProject {
                 while (UmlType.containsCustomUmlTypeNamed(c.getName()))
                     c.setName(c.getName()+"(1)");
             }
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
             umlProject=null;
         }
