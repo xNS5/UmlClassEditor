@@ -559,7 +559,6 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
     private void toolbarMenuLoadProject() {
         final Context context=this;
-        final Spinner spinner=new Spinner(context);
         ArrayAdapter<String> adapter = projectDirectoryAdapter();
         /*
          * Gets the adapter and checks to see if it contains any files to load. If there are none, a toast message pops up alerting the user.
@@ -764,10 +763,10 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
                     toolbarMenuDeleteProject();
                     break;
                 case R.id.toolbar_menu_export:
-                    menuItemImport();
+                    menuItemExport();
                     break;
                 case R.id.toolbar_menu_import:
-                    menuItemExport();
+                    menuItemImport();
                     break;
                 case R.id.toolbar_menu_create_custom_type:
                     menuCreateCustomType();

@@ -24,9 +24,8 @@ import java.util.Objects;
 
 public class IOUtils {
 
-    private IOUtils() {
+    private IOUtils() {}
 
-    }
 
     public static void saveFileToInternalStorage(String data,File file) {
         try {
