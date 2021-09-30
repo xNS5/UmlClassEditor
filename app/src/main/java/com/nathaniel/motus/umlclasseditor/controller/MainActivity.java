@@ -21,11 +21,13 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.Checkable;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -33,11 +35,9 @@ import androidx.activity.result.*;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
 import androidx.core.view.MenuCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -57,12 +57,11 @@ import com.nathaniel.motus.umlclasseditor.view.MethodEditorFragment;
 import com.nathaniel.motus.umlclasseditor.view.ParameterEditorFragment;
 
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements FragmentObserver,
         GraphView.GraphViewObserver/*,
@@ -71,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
     private UmlProject mProject;
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolbar;
+    private Button mToolbarTitle;
     private NavigationView mNavigationView;
 //    private TextView mMenuHeaderProjectNameText;
 
@@ -219,17 +219,21 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
 //  android:label="@string/app_name"
     private void configureToolbar() {
-        mToolbar = findViewById(R.id.main_activity_toolbar);
-        Button title_button = (Button)mToolbar.findViewById(R.id.title_button);
-        title_button.setText(mProject.getName());
-        mToolbar.findViewById(R.id.title_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                toolbarMenuSaveAs();
-            }
-        });
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        try {
+            mToolbar = findViewById(R.id.main_activity_toolbar);
+            mToolbarTitle = (Button) mToolbar.findViewById(R.id.title_button);
+            mToolbarTitle.setText(mProject.getName());
+            mToolbar.findViewById(R.id.title_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toolbarMenuSaveAs();
+                }
+            });
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        } catch(NullPointerException e){
+            e.printStackTrace();
+        }
     }
 
     /*
@@ -255,6 +259,10 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         mMenuHeaderProjectNameText.setText(mProject.getName());
     }
 */
+
+    private void updateToolbarView(){
+        mToolbarTitle.setText(mProject.getName());
+    }
 
     private void savePreferences() {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
@@ -517,6 +525,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
                 })
                 .create()
                 .show();
+        updateToolbarView();
     }
 
     private void toolbarMenuNewProject() {
@@ -534,6 +543,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
                 .show();
         mGraphView.setUmlProject(mProject);
 //        updateNavigationView();
+        updateToolbarView();
     }
 
     private void toolbarMenuLoadProject() {
@@ -544,8 +554,10 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
          * Gets the adapter and checks to see if it contains any files to load. If there are none, a toast message pops up alerting the user.
          * */
         if(adapter.getCount() > 0){
+
             spinner.setAdapter(adapter);
             AlertDialog.Builder builder=new AlertDialog.Builder(this);
+
             builder.setTitle("Load project")
                     .setMessage("Choose project to load :")
                     .setView(spinner)
@@ -564,66 +576,78 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
                                 mProject = UmlProject.load(getApplicationContext(), fileName);
                                 mGraphView.setUmlProject(mProject);
 //                                updateNavigationView();
+                                updateToolbarView();
                             }
                         }
                     })
                     .create()
                     .show();
+            updateToolbarView();
         } else {
             Toast.makeText(context,"No files to load",Toast.LENGTH_SHORT).show();
         }
     }
 
     private void toolbarMenuDeleteProject() {
-        final Context context=this;
-        final Spinner spinner=new Spinner(context);
         ArrayAdapter<String> adapter = projectDirectoryAdapter();
         /*
         * Gets the adapter and checks to see if it contains any files to delete. If there are none, a toast message pops up alerting the user.
         * */
         if(adapter.getCount() > 0){
-            spinner.setAdapter(adapter);
-            AlertDialog.Builder builder=new AlertDialog.Builder(this);
-            builder.setTitle("Delete project")
-                    .setMessage("Choose project to delete :")
-                    .setView(spinner)
-                    .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    })
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            String fileName=spinner.getSelectedItem().toString();
-                            if (fileName!=null) {
-                                File pathName=new File(getFilesDir(),UmlProject.PROJECT_DIRECTORY);
-                                final File file=new File(pathName,fileName);
-                                AlertDialog.Builder alert=new AlertDialog.Builder(context);
-                                alert.setTitle("Delete Project")
-                                        .setMessage("Are you sure you want to delete "+fileName+" ?")
-                                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-
+            Context c = this;
+            AlertDialog.Builder builder = new AlertDialog.Builder(c);
+            int checkedCount = 0;
+            String[] fileNames = new String[adapter.getCount()];
+            for(int i = 0; i < adapter.getCount(); i++) {
+                fileNames[i] = adapter.getItem(i);
+            }
+            boolean[] checkedItems = new boolean[fileNames.length];
+            builder.setTitle("Delete")
+            .setMultiChoiceItems(fileNames, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int i, boolean isChecked) {
+                    checkedItems[i] = isChecked;
+                }
+            })
+            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(c);
+                    alert.setMessage("Deleting files is permanent. Are you sure you wish to continue?")
+                            .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            })
+                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int j) {
+                                    boolean sameProjectDeleted = false;
+                                    File pathName=new File(getFilesDir(),UmlProject.PROJECT_DIRECTORY);
+                                    for(int i = 0; i < checkedItems.length; i++){
+                                        if(checkedItems[i]){
+                                            String name = fileNames[i];
+                                            File f = new File(pathName, fileNames[i]);
+                                            f.delete();
+                                            if(name.equals(mProject.getName())){
+                                                sameProjectDeleted = true;
                                             }
-                                        })
-                                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                file.delete();
-                                            }
-                                        })
-                                        .create()
-                                        .show();
-                            }
-                        }
-                    })
-                    .create()
-                    .show();
+                                        }
+                                    }
+                                    if(sameProjectDeleted){
+                                        toolbarMenuNewProject();
+                                    }
+                                }
+                            })
+                            .create()
+                            .show();
+                }
+            })
+            .setNegativeButton("Cancel", null)
+            .create()
+            .show();
         } else {
-            Toast.makeText(context,"No projects to delete",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"No projects to delete",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -674,8 +698,8 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new ArrayList<>());
         File[] file_list = new File(getFilesDir(), UmlProject.PROJECT_DIRECTORY).listFiles();
         try {
-            adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, IOUtils.sortedFiles(file_list));
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, IOUtils.sortedFiles(file_list));
+//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         } catch(NullPointerException e){
             e.printStackTrace();
         }
@@ -735,12 +759,10 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
 //    **********************************************************************************************
 //    Menu item called methods
-//    TODO: Remove deprecated API + find alternatives
 //    **********************************************************************************************
     private void menuItemExport() {
         Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.setType("text/*");
-//        startActivityForResult(intent, INTENT_CREATE_DOCUMENT_EXPORT_PROJECT);
         intent.putExtra("intent", INTENT_CREATE_DOCUMENT_EXPORT_PROJECT);
         mStartForResult.launch(intent);
     }
@@ -748,7 +770,6 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
     private void menuItemImport() {
         Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
-//        startActivityForResult(intent, INTENT_OPEN_DOCUMENT_IMPORT_PROJECT);
         intent.putExtra("intent", INTENT_OPEN_DOCUMENT_IMPORT_PROJECT);
         mStartForResult.launch(intent);
     }

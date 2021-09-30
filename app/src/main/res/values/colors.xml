@@ -2,6 +2,6 @@
 <resources>
     <color name="colorPrimary">#4c566a</color>
     <color name="colorPrimaryDark">#2e3440</color>
-    <color name="colorAccent">#d8dee9</color>
+    <color name="colorAccent">#000000</color>
     <color name="radioButtonColor">#000000</color>
 </resources>
