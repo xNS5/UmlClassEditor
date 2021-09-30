@@ -14,9 +14,13 @@
                 android:title="@string/load_project"
                 android:icon="@drawable/folder"/>
             <item
+                android:id="@+id/toolbar_menu_save"
+                android:title="@string/save"
+                android:icon="@drawable/floppy_disk"/>g
+            <item
                 android:id="@+id/toolbar_menu_save_as"
                 android:title="@string/save_as"
-                android:icon="@drawable/floppy_disk"/>
+                android:icon="@drawable/save_as"/>
             <item
                 android:id="@+id/toolbar_menu_merge_project"
                 android:title="@string/merge_project"

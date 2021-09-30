@@ -507,6 +507,11 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 //    Navigation view called methods
 //    **********************************************************************************************
 
+    private void toolbarMenuSave(){
+        mProject.save(this);
+        Toast.makeText(this, "Project Saved", Toast.LENGTH_SHORT).show();
+    }
+
     private void toolbarMenuSaveAs() {
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         final EditText editText = new EditText(this);
@@ -538,12 +543,18 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         builder.setTitle("New Project")
                 .setView(editText)
                 .setNegativeButton("CANCEL", (dialogInterface, i) -> {})
-                .setPositiveButton("OK", (dialogInterface, i) -> mProject = new UmlProject(editText.getText().toString(), mProject.getContext()))
+                .setPositiveButton("OK", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        toolbarMenuSave();
+                        mProject = new UmlProject(editText.getText().toString(), mProject.getContext());
+                        mGraphView.setUmlProject(mProject);
+                        updateToolbarView();
+                    }
+                })
                 .create()
                 .show();
-        mGraphView.setUmlProject(mProject);
-//        updateNavigationView();
-        updateToolbarView();
+
     }
 
     private void toolbarMenuLoadProject() {
@@ -553,39 +564,51 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         /*
          * Gets the adapter and checks to see if it contains any files to load. If there are none, a toast message pops up alerting the user.
          * */
+
         if(adapter.getCount() > 0){
-
-            spinner.setAdapter(adapter);
-            AlertDialog.Builder builder=new AlertDialog.Builder(this);
-
-            builder.setTitle("Load project")
-                    .setMessage("Choose project to load :")
-                    .setView(spinner)
-                    .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    })
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+            alertDialog.setTitle("Load Project");
+            String[] fileNames = new String[adapter.getCount()];
+            for(int i = 0; i < adapter.getCount(); i++) {
+                String temp = adapter.getItem(i);
+                if(!temp.equals(mProject.getName())){
+                    fileNames[i] = adapter.getItem(i);
+                }
+            }
+            if(fileNames[0] == null){
+                Toast.makeText(context,"No projects to load",Toast.LENGTH_SHORT).show();
+                return;
+            }
+            /*
+             * This is a really hacky way to get
+             * */
+            int[] checkedItem = {0};
+            alertDialog.setSingleChoiceItems(fileNames, checkedItem[0], new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    checkedItem[0] = which;
+                }
+            })
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            String fileName=spinner.getSelectedItem().toString();
-                            if (fileName != null) {
-                                UmlType.clearProjectUmlTypes();
-                                mProject = UmlProject.load(getApplicationContext(), fileName);
-                                mGraphView.setUmlProject(mProject);
-//                                updateNavigationView();
+                        public void onClick(DialogInterface dialog, int which) {
+                            String fileName = fileNames[checkedItem[0]];
+                            if (fileName!=null) {
+                                UmlProject project = UmlProject.load(getApplicationContext(), fileName);
+                                assert project != null;
+                                mProject.mergeWith(project);
+                                mGraphView.invalidate();
                                 updateToolbarView();
                             }
                         }
                     })
+                    .setNegativeButton("Cancel", null)
                     .create()
                     .show();
-            updateToolbarView();
         } else {
-            Toast.makeText(context,"No files to load",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"No projects to load",Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private void toolbarMenuDeleteProject() {
@@ -596,13 +619,12 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         if(adapter.getCount() > 0){
             Context c = this;
             AlertDialog.Builder builder = new AlertDialog.Builder(c);
-            int checkedCount = 0;
             String[] fileNames = new String[adapter.getCount()];
+            boolean[] checkedItems = new boolean[adapter.getCount()];
             for(int i = 0; i < adapter.getCount(); i++) {
                 fileNames[i] = adapter.getItem(i);
             }
-            boolean[] checkedItems = new boolean[fileNames.length];
-            builder.setTitle("Delete")
+            builder.setTitle("Delete Project(s)")
             .setMultiChoiceItems(fileNames, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int i, boolean isChecked) {
@@ -636,6 +658,7 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
                                     }
                                     if(sameProjectDeleted){
                                         toolbarMenuNewProject();
+                                        updateToolbarView();
                                     }
                                 }
                             })
@@ -652,38 +675,45 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
     }
 
     private void toolbarMenuMerge() {
-        final Context context =this;
-        final Spinner spinner=new Spinner(context);
+        final Context context = this;
         ArrayAdapter<String> adapter = projectDirectoryAdapter();
         /*
          * Gets the adapter and checks to see if it contains any files to merge. If there are none, a toast message pops up alerting the user.
          * */
         if(adapter.getCount() > 0){
-            spinner.setAdapter(adapter);
-            AlertDialog.Builder builder=new AlertDialog.Builder(this);
-            builder.setTitle("Merge project")
-                    .setMessage("Choose project to merge")
-                    .setView(spinner)
-                    .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                        }
-                    })
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            String fileName=spinner.getSelectedItem().toString();
-                            if (fileName!=null) {
-                                UmlProject project = UmlProject.load(getApplicationContext(), fileName);
-                                assert project != null;
-                                mProject.mergeWith(project);
-                                mGraphView.invalidate();
-                            }
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+            alertDialog.setTitle("Merge Projects");
+            String[] fileNames = new String[adapter.getCount()];
+            for(int i = 0; i < adapter.getCount(); i++) {
+                fileNames[i] = adapter.getItem(i);
+            }
+            /*
+            * This is a really hacky way to get
+            * */
+            int[] checkedItem = {0};
 
+            alertDialog.setSingleChoiceItems(fileNames, checkedItem[0], new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    checkedItem[0] = which;
+                }
+            })
+            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String fileName = fileNames[checkedItem[0]];
+                        if (fileName!=null) {
+                            UmlProject project = UmlProject.load(getApplicationContext(), fileName);
+                            assert project != null;
+                            mProject.mergeWith(project);
+                            mGraphView.invalidate();
+                            Toast.makeText(context, String.format("Merged %s with %s", mProject.getName(), fileName),Toast.LENGTH_SHORT).show();
                         }
-                    })
-                    .create()
-                    .show();
+                    }
+            })
+            .setNegativeButton("Cancel", null)
+            .create()
+            .show();
         } else {
             Toast.makeText(context,"No projects to merge",Toast.LENGTH_SHORT).show();
         }
@@ -720,6 +750,9 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
                     break;
                 case R.id.toolbar_menu_load_project:
                     toolbarMenuLoadProject();
+                    break;
+                case R.id.toolbar_menu_save:
+                    toolbarMenuSave();
                     break;
                 case R.id.toolbar_menu_save_as:
                     toolbarMenuSaveAs();

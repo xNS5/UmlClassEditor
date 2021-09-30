@@ -64,4 +64,5 @@
     <string name="composition_arrow">Composition Arrow</string>
     <string name="realisation_arrow">Realisation Arrow</string>
     <string name="inheritance_arrow">Inheritance Arrow</string>
+    <string name="save">Save</string>
 </resources>
