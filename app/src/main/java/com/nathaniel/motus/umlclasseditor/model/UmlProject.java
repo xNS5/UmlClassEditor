@@ -1,10 +1,14 @@
 package com.nathaniel.motus.umlclasseditor.model;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 
 import com.nathaniel.motus.umlclasseditor.controller.IOUtils;
+import com.nathaniel.motus.umlclasseditor.view.GraphView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,6 +53,14 @@ public class UmlProject {
         mContext = context;
     }
 
+    public UmlProject(String name, Context context, ArrayList<UmlClass> classes, ArrayList<UmlRelation> relations, int class_count){
+        mName = name;
+        mUmlClasses= classes;
+        mUmlClassCount= class_count;
+        mUmlRelations= relations;
+        mContext = context;
+    }
+
 //    **********************************************************************************************
 //    Getters and setters
 //    **********************************************************************************************
@@ -69,6 +81,7 @@ public class UmlProject {
         return mUmlRelations;
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public UmlClass getUmlClass(String className) {
         for (UmlClass c:mUmlClasses)
             if (Objects.equals(c.getName(), className)) return c;
@@ -255,7 +268,7 @@ public class UmlProject {
             for (UmlClass c : getClassesFromJSONArray((JSONArray)jsonObjectCopy.get(JSON_PROJECT_CLASSES)))
                 project.addUmlClass(c);
             project.populateClassesFromJSONArray((JSONArray) jsonObject.get(JSON_PROJECT_CLASSES));
-            project.setUmlRelations(UmlProject.getRelationsFromJSONArray((JSONArray) jsonObject.get(JSON_PROJECT_RELATIONS),project));
+            project.setUmlRelations(getRelationsFromJSONArray((JSONArray) jsonObject.get(JSON_PROJECT_RELATIONS),project));
             return project;
         } catch (JSONException e) {
             return null;
@@ -348,10 +361,14 @@ public class UmlProject {
         IOUtils.saveFileToExternalStorage(context,this.toJSONObject(context).toString(),toDestination);
     }
 
+    public void exportProjectPDF(Context context, GraphView graphView, Uri toDestination) {
+        IOUtils.savePdfToExternalStorage(context, graphView,toDestination);
+    }
+
     public static UmlProject importProject(Context context, Uri fromFileUri) {
         UmlProject umlProject;
         try {
-            umlProject=UmlProject.fromJSONObject(new JSONObject(IOUtils.readFileFromExternalStorage(context,fromFileUri)),context);
+            umlProject= fromJSONObject(new JSONObject(IOUtils.readFileFromExternalStorage(context,fromFileUri)),context);
             assert umlProject != null;
             for (UmlClass c : umlProject.getUmlClasses()) {
                 while (UmlType.containsPrimitiveUmlTypeNamed(c.getName()))
@@ -368,7 +385,7 @@ public class UmlProject {
     }
 
     public void mergeWith(UmlProject project) {
-        for (UmlClass c:project.getUmlClasses()){
+        for (UmlClass c :project.getUmlClasses()){
 
             while (UmlType.containsPrimitiveUmlTypeNamed(c.getName()))
                 c.setName(c.getName()+"(1)");

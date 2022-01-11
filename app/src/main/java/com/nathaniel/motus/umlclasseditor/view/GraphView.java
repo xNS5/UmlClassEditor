@@ -198,6 +198,7 @@ public class GraphView extends View implements View.OnTouchListener{
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        canvas.save();
 
         updateProjectGeometricalParameters();
 
