@@ -94,61 +94,88 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
 
     private final ActivityResultLauncher<Intent> mMenuItemExport = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
            result -> {
+               Uri fileNameUri = null;
+               boolean success = false;
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         try {
-                            Uri fileNameUri = result.getData().getData();
+                            fileNameUri = result.getData().getData();
                             mProject.exportProject(this, fileNameUri);
+                            success = true;
                         } catch (NullPointerException e) {
                             Log.i("TEST", "ActivityResult is Null");
                         }
                     }
+               makeToast(fileNameUri, success);
             }),
             mMenuItemExportPDF = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
+                        Uri fileNameUri = null;
+                        boolean success = false;
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             try {
-                                Uri fileNameUri = result.getData().getData();
+                                fileNameUri = result.getData().getData();
                                 mProject.exportProjectPDF(this, this.mGraphView, fileNameUri);
+                                success = true;
                             } catch (NullPointerException e) {
                                 Log.e("TEST", "ActivityResult is Null");
                             }
                         }
+                        makeToast(fileNameUri, success);
                     }),
             mMenuItemImport = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                result -> {
+                    Uri fileNameUri = null;
+                    boolean success = false;
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             try{
-                                Uri fileNameUri = result.getData().getData();
+                                fileNameUri = result.getData().getData();
                                 UmlType.clearProjectUmlTypes();
                                 mProject=UmlProject.importProject(getApplicationContext(),fileNameUri);
                                 mGraphView.setUmlProject(mProject);
+                                success = true;
                             }catch(NullPointerException e){
                                 Log.i("TEST", "ActivityResult is Null");
                             }
                         }
+                        makeToast(fileNameUri, success);
                 }),
                 mMenuItemImportType = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                         result -> {
+                            Uri fileNameUri = null;
+                            boolean success = false;
                             if (result.getResultCode() == Activity.RESULT_OK) {
                                 try{
-                                    Uri fileNameUri= result.getData().getData();
+                                    fileNameUri= result.getData().getData();
                                     UmlType.importCustomUmlTypes(getApplicationContext(),fileNameUri);
+                                    success = true;
                                 }catch(NullPointerException e){
                                     Log.i("TEST", "ActivityResult is Null");
                                 }
                             }
+                            makeToast(fileNameUri, success);
                         }),
                 mMenuItemExportType = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                         result -> {
+                            Uri fileNameUri = null;
+                            boolean success = false;
                             if (result.getResultCode() == Activity.RESULT_OK) {
                                 try{
-                                    Uri fileNameUri=result.getData().getData();
+                                    fileNameUri=result.getData().getData();
                                     UmlType.exportCustomUmlTypes(getApplicationContext(),fileNameUri);
+                                    success = true;
                                 }catch(NullPointerException e){
                                     Log.i("TEST", "ActivityResult is Null");
                                 }
                             }
+                            makeToast(fileNameUri, success);
                         });
+
+        private void makeToast(Uri mFileNameUri, boolean success) {
+            if(mFileNameUri != null){
+                File file = new File(mFileNameUri.getPath());
+                Toast.makeText(this, String.format("Exporting %s %s",  file.getName(), (success ? "successful" : "unsuccessful")), Toast.LENGTH_SHORT).show();
+            }
+        }
 
 
     @Override
@@ -160,7 +187,6 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         //    **********************************************************************************************
         //    Views declaration
         //    **********************************************************************************************
-        FrameLayout mMainActivityFrame = findViewById(R.id.activity_main_frame);
 
         UmlType.clearUmlTypes();
         UmlType.initializePrimitiveUmlTypes(this);
@@ -227,8 +253,10 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
             mToolbarTitle = mToolbar.findViewById(R.id.title_button);
             mToolbarTitle.setText(mProject.getName());
             mToolbar.findViewById(R.id.title_button).setOnClickListener(v -> toolbarMenuSaveAs());
+            mToolbar.setClickable(true);
             setSupportActionBar(mToolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
+            updateToolbarView();
         } catch(NullPointerException e){
             e.printStackTrace();
         }
@@ -512,10 +540,10 @@ public class MainActivity extends AppCompatActivity implements FragmentObserver,
         builder.setTitle("Save Project")
                 .setView(editText)
                 .setNegativeButton("CANCEL", (dialogInterface, i) -> {})
-                .setPositiveButton("OK", (dialogInterface, i) -> saveAs(editText.getText().toString()))
+                .setPositiveButton("OK", (dialogInterface, i) -> {saveAs(editText.getText().toString()); updateToolbarView();})
                 .create()
                 .show();
-        updateToolbarView();
+
     }
 
     private void toolbarMenuNewProject() {
