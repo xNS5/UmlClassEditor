@@ -51,8 +51,8 @@
     <string name="custom_types">Custom Types</string>
     <string name="create_string">Create</string>
     <string name="delete_string">Delete</string>
-    <string name="import_string">Import</string>
-    <string name="export_string">Export</string>
+    <string name="import_string">Import JSON</string>
+    <string name="export_string">Export as JSON</string>
     <string name="help">Help</string>
     <string name="share">Share</string>
     <string name="add_a_class">Add a class</string>
