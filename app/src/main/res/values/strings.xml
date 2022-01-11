@@ -18,6 +18,7 @@
     <string name="edit_method_string">Edit Method</string>
     <string name="edit_parameter_string">Edit Parameter</string>
     <string name="create_parameter_string">Create Parameter</string>
+    <string name="pdf_export">Export to PDF</string>
     <string name="project_name">Project Name</string>
     <string name="new_project">New</string>
     <string name="load_project">Load</string>
