@@ -122,9 +122,9 @@ public class ClassEditorFragment extends EditorFragment implements View.OnClickL
 
     @Override
     protected void configureViews() {
-        mEditClassText =getActivity().findViewById(R.id.edit_class_text);
+        mEditClassText = getActivity().findViewById(R.id.edit_class_text);
 
-        mClassNameEdit=getActivity().findViewById(R.id.class_name_input);
+        mClassNameEdit = getActivity().findViewById(R.id.class_name_input);
 
         mDeleteClassButton=getActivity().findViewById(R.id.delete_class_button);
         mDeleteClassButton.setTag(DELETE_CLASS_BUTTON_TAG);
@@ -253,12 +253,12 @@ public class ClassEditorFragment extends EditorFragment implements View.OnClickL
     }
 
     private void setOnEditDisplay() {
-        mEditClassText.setText("Edit class");
+        mEditClassText.setText(getContext().getString(R.string.edit_class_string));
         mDeleteClassButton.setVisibility(View.VISIBLE);
     }
 
     private void setOnCreateDisplay() {
-        mEditClassText.setText("Create class");
+        mEditClassText.setText(getContext().getString(R.string.create_class_string));
         mDeleteClassButton.setVisibility(View.INVISIBLE);
     }
 

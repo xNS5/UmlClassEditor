@@ -1,45 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <group
-        android:id="@+id/project_group"
-        android:checkableBehavior="none">
     <item
-        android:id="@+id/toolbar_menu_export"
-        app:showAsAction="never"
-        android:title="Export project"/>
+        android:id="@+id/project_menu"
+        android:title="@string/project">
+        <menu>
+            <item
+                android:id="@+id/toolbar_menu_new_project"
+                android:icon="@drawable/plus"
+                android:title="@string/new_project" />
+            <item
+                android:id="@+id/toolbar_menu_load_project"
+                android:icon="@drawable/folder"
+                android:title="@string/load_project" />
+            <item
+                android:id="@+id/toolbar_menu_save"
+                android:icon="@drawable/floppy_disk"
+                android:title="@string/save" />
+            <item
+                android:id="@+id/toolbar_menu_save_as"
+                android:icon="@drawable/save_as"
+                android:title="@string/save_as" />
+            <item
+                android:id="@+id/toolbar_menu_merge_project"
+                android:icon="@drawable/merge"
+                android:title="@string/merge_project" />
+            <item
+                android:id="@+id/toolbar_menu_delete_project"
+                android:icon="@drawable/delete"
+                android:title="@string/delete_project" />
+            <item
+                android:icon="@drawable/share"
+                android:title="@string/share">
+                <menu>
+                    <item
+                        android:id="@+id/toolbar_menu_export_pdf"
+                        android:icon="@drawable/pdf"
+                        android:title="@string/pdf_export" />
+                    <item
+                        android:id="@+id/toolbar_menu_export"
+                        android:icon="@drawable/export"
+                        android:title="@string/export_string"
+                        app:showAsAction="never" />
+                    <item
+                        android:id="@+id/toolbar_menu_import"
+                        android:icon="@drawable/import_icon"
+                        android:title="@string/import_string" />
+                </menu>
+            </item>
+        </menu>
+    </item>
     <item
-        android:id="@+id/toolbar_menu_import"
-        app:showAsAction="never"
-        android:title="Import project"/>
-    </group>
-    <group
-        android:id="@+id/custom_type_group"
-        android:checkableBehavior="none">
-        <item
-            android:id="@+id/toolbar_menu_create_custom_type"
-            app:showAsAction="never"
-            android:title="Create custom type"/>
-        <item
-            android:id="@+id/toolbar_menu_delete_custom_types"
-            app:showAsAction="never"
-            android:title="Delete custom types"/>
-        <item
-            android:id="@+id/toolbar_menu_export_custom_types"
-            app:showAsAction="never"
-            android:title="Export custom types"/>
-        <item
-            android:id="@+id/toolbar_menu_import_custom_types"
-            app:showAsAction="never"
-            android:title="Import custom types"/>
-    </group>
+        android:id="@+id/type_menu"
+        android:title="@string/custom_types">
+        <menu>
+            <item
+                android:id="@+id/toolbar_menu_create_custom_type"
+                android:title="@string/create_string"
+                android:icon="@drawable/plus"
+                />
+            <item
+                android:id="@+id/toolbar_menu_delete_custom_types"
+                app:showAsAction="never"
+                android:title="@string/delete_string"
+                android:icon="@drawable/delete"/>
+            <item
+                android:id="@+id/toolbar_menu_export_custom_types"
+                app:showAsAction="never"
+                android:title="@string/export_string"
+                android:icon="@drawable/export"/>
+            <item
+                android:id="@+id/toolbar_menu_import_custom_types"
+                app:showAsAction="never"
+                android:title="@string/import_string"
+                android:icon="@drawable/import_icon"/>
+        </menu>
+    </item>
     <group
         android:id="@+id/help_group"
         android:checkableBehavior="none">
         <item
             android:id="@+id/toolbar_menu_help"
-            app:showAsAction="never"
-            android:title="Help"/>
+            android:title="@string/help"
+            android:icon="@drawable/information"/>
     </group>
 
 </menu>

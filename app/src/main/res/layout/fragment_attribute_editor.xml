@@ -6,194 +6,246 @@
     android:layout_height="match_parent"
     tools:context=".view.AttributeEditorFragment">
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".view.ClassEditorFragment"
-    android:layout_margin="5dp">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/edit_attribute_text"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="20sp"
-        android:textSize="20sp"
-        android:text="Edit attribute" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/attribute_name_text"
-        android:layout_alignStart="@id/edit_attribute_text"
-        android:layout_alignBaseline="@id/attribute_name_input"
-        android:layout_marginBottom="20sp"
-        android:textSize="18sp"
-        android:text="Name :"/>
-
-    <EditText
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/attribute_name_input"
-        android:layout_below="@id/edit_attribute_text"
-        android:layout_toEndOf="@id/attribute_name_text"
-        android:gravity="start"
-        android:textSize="18sp"
-        android:hint="Enter a name"/>
+        android:layout_margin="5dp"
+        android:gravity="center"
+        tools:context=".view.ClassEditorFragment">
 
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/attribute_visibility_radio_group"
-        android:layout_alignStart="@id/attribute_name_text"
-        android:layout_below="@id/attribute_name_input"
-        android:layout_marginBottom="10sp"
-        android:orientation="horizontal">
-        <RadioButton
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/attribute_state_container"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/attribute_visibility_radio_group"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/attribute_static_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20sp"
+                android:layout_marginBottom="20sp"
+                android:minHeight="48dp"
+                android:text="@string/static_string"
+                android:textSize="18sp" />
+
+            <CheckBox
+                android:id="@+id/attribute_final_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20sp"
+                android:layout_marginBottom="20sp"
+                android:minHeight="48dp"
+                android:text="@string/final_string"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/attribute_name_input"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/attribute_public_radio"
+            android:layout_below="@id/edit_attribute_text"
+            android:layout_toEndOf="@id/attribute_name_text"
+            android:gravity="start"
+            android:hint="@string/enter_a_name"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:minHeight="48dp"
             android:textSize="18sp"
-            android:layout_marginEnd="5sp"
-            android:checked="true"
-            android:text="Public"/>
-        <RadioButton
-            android:layout_width="wrap_content"
+            tools:ignore="TextContrastCheck" />
+
+        <EditText
+            android:id="@+id/attribute_dimension_input"
+            android:layout_width="50sp"
             android:layout_height="wrap_content"
-            android:id="@+id/attribute_protected_radio"
+            android:layout_alignBaseline="@id/attribute_dimension_text"
+            android:layout_marginBottom="20sp"
+            android:layout_toEndOf="@id/attribute_dimension_text"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:minHeight="48dp"
             android:textSize="18sp"
-            android:layout_marginEnd="5sp"
-            android:text="Protected"/>
-        <RadioButton
-            android:layout_width="wrap_content"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/attribute_private_radio"
-            android:textSize="18sp"
-            android:layout_marginEnd="5sp"
-            android:text="Private"/>
-    </RadioGroup>
+            android:layout_below="@id/attribute_multiplicity_radio_group"
+            android:gravity="center_horizontal">
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/attribute_static_check"
-        android:textSize="18sp"
-        android:layout_marginBottom="20sp"
-        android:layout_marginEnd="20sp"
-        android:layout_alignStart="@id/attribute_visibility_radio_group"
-        android:layout_below="@id/attribute_visibility_radio_group"
-        android:text="Static"/>
+            <Button
+                android:id="@+id/attribute_cancel_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/baseline_cancel_black_18dp"
+                android:text="@string/cancel"
+                android:textColor="#000000"
+                android:textSize="18sp" />
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/attribute_final_check"
-        android:textSize="18sp"
-        android:layout_marginBottom="20sp"
-        android:layout_marginEnd="20sp"
-        android:layout_toRightOf="@id/attribute_static_check"
-        android:layout_alignBaseline="@id/attribute_static_check"
-        android:text="Final"/>
+            <Button
+                android:id="@+id/attribute_ok_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/baseline_delete_forever_black_18dp"
+                android:text="@string/del"
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/attribute_type_text"
-        android:textSize="18sp"
-        android:layout_marginBottom="20sp"
-        android:layout_alignStart="@id/attribute_static_check"
-        android:layout_below="@id/attribute_static_check"
-        android:text="Type :"/>
+                android:textColor="#000000"
+                android:textSize="18sp" />
 
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/attribute_type_spinner"
-        android:layout_marginBottom="10sp"
-        android:layout_toRightOf="@id/attribute_type_text"
-        android:layout_alignTop="@id/attribute_type_text"/>
+            <Button
+                android:id="@+id/delete_attribute_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/baseline_check_black_18dp"
+                android:text="@string/ok"
+                android:textColor="#000000"
+                android:textSize="18sp" />
 
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/attribute_multiplicity_radio_group"
-        android:layout_marginBottom="10sp"
-        android:layout_alignStart="@id/attribute_type_text"
-        android:layout_below="@id/attribute_type_text"
-        android:orientation="vertical">
-        <RadioButton
-            android:layout_width="wrap_content"
+        </LinearLayout>
+
+        <RadioGroup
+            android:id="@+id/attribute_visibility_radio_group"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/attribute_simple_radio"
+            android:layout_below="@id/attribute_name_input"
+            android:layout_alignStart="@id/attribute_name_text"
             android:layout_marginBottom="10sp"
-            android:textSize="18sp"
-            android:checked="true"
-            android:text="Single"/>
-        <RadioButton
+            android:gravity="center"
+            android:minHeight="48dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/attribute_public_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="5sp"
+                android:buttonTint="@color/radioButtonColor"
+                android:checked="true"
+                android:text="@string/public_string"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/attribute_protected_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="5sp"
+                android:buttonTint="@color/radioButtonColor"
+                android:text="@string/protected_string"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/attribute_private_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="5sp"
+                android:buttonTint="@color/radioButtonColor"
+                android:text="@string/private_string"
+                android:textSize="18sp"
+                tools:ignore="TouchTargetSizeCheck" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/attribute_multiplicity_radio_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/attribute_collection_radio"
+            android:layout_below="@id/attribute_type_text"
+            android:layout_alignStart="@id/attribute_type_text"
             android:layout_marginBottom="10sp"
-            android:textSize="18sp"
-            android:text="Collection"/>
-        <RadioButton
-            android:layout_width="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/attribute_simple_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10sp"
+                android:checked="true"
+                android:minHeight="48dp"
+                android:text="@string/single"
+                android:textSize="18sp"
+                android:buttonTint="@color/radioButtonColor"
+                />
+
+            <RadioButton
+                android:id="@+id/attribute_collection_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10sp"
+                android:minHeight="48dp"
+                android:text="@string/collection"
+                android:textSize="18sp"
+                android:buttonTint="@color/radioButtonColor"
+                />
+
+            <RadioButton
+                android:id="@+id/attribute_array_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10sp"
+                android:minHeight="48dp"
+                android:text="@string/array"
+                android:textSize="18sp"
+                android:buttonTint="@color/radioButtonColor"
+                />
+        </RadioGroup>
+
+        <Spinner
+            android:id="@+id/attribute_type_spinner"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/attribute_array_radio"
+            android:layout_alignTop="@id/attribute_type_text"
             android:layout_marginBottom="10sp"
-            android:textSize="18sp"
-            android:text="Array"/>
-    </RadioGroup>
+            android:layout_toEndOf="@id/attribute_type_text"
+            android:minHeight="48dp"
+            tools:ignore="SpeakableTextPresentCheck" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/attribute_dimension_text"
-        android:layout_toEndOf="@id/attribute_multiplicity_radio_group"
-        android:layout_alignBottom="@id/attribute_multiplicity_radio_group"
-        android:paddingBottom="24sp"
-        android:textSize="18sp"
-        android:text="dimension :"/>
-
-    <EditText
-        android:layout_width="50sp"
-        android:layout_height="wrap_content"
-        android:id="@+id/attribute_dimension_input"
-        android:layout_toEndOf="@id/attribute_dimension_text"
-        android:layout_alignBaseline="@id/attribute_dimension_text"
-        android:textSize="18sp"
-        android:layout_marginBottom="20sp"
-        android:inputType="number"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/attribute_multiplicity_radio_group"
-        android:gravity="center_horizontal">
-        <Button
+        <TextView
+            android:id="@+id/edit_attribute_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/attribute_cancel_button"
-            android:textSize="18sp"
-            android:drawableLeft="@drawable/baseline_cancel_black_18dp"
-            android:text="CANCEL"/>
-        <Button
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="20sp"
+            android:text="@string/edit_attribute"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/attribute_name_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/attribute_ok_button"
-            android:textSize="18sp"
-            android:drawableLeft="@drawable/baseline_check_black_18dp"
-            android:text="OK"/>
-        <Button
+            android:layout_alignBaseline="@id/attribute_name_input"
+            android:layout_alignStart="@id/edit_attribute_text"
+            android:layout_marginBottom="20sp"
+            android:text="@string/name"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/attribute_type_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/delete_attribute_button"
-            android:textSize="18sp"
-            android:drawableLeft="@drawable/baseline_delete_forever_black_18dp"
-            android:text="DEL"/>
+            android:layout_below="@id/attribute_state_container"
+            android:layout_alignStart="@id/attribute_state_container"
+            android:layout_marginBottom="20sp"
+            android:text="@string/type_string"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/attribute_dimension_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/attribute_multiplicity_radio_group"
+            android:layout_toEndOf="@id/attribute_multiplicity_radio_group"
+            android:paddingBottom="24sp"
+            android:text="@string/dimension"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
 
-</RelativeLayout>
+    </RelativeLayout>
 </ScrollView>

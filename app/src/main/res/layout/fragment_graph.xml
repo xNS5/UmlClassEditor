@@ -32,27 +32,31 @@
                 android:layout_weight="25"
                 android:id="@+id/inheritance_button"
                 android:src="@drawable/inheritance"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/inheritance_arrow" />
             <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="25"
                 android:id="@+id/realization_button"
                 android:src="@drawable/realization"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/realisation_arrow" />
             <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="25"
                 android:id="@+id/aggregation_button"
                 android:src="@drawable/aggregation"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/composition_arrow"/>
             <Button
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="25"
                 android:id="@+id/escape_button"
-                android:text="ESC"/>
+                android:text="@string/esc"
+                android:contentDescription="@string/escape"/>
         </LinearLayout>
 
         <LinearLayout
@@ -65,30 +69,32 @@
                 android:layout_weight="25"
                 android:id="@+id/association_button"
                 android:src="@drawable/association"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/association"/>
             <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="25"
                 android:id="@+id/dependency_button"
                 android:src="@drawable/dependency"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/dependence_arrow"/>
             <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="25"
                 android:id="@+id/composition_button"
                 android:src="@drawable/composition"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/composition_and_contained_arrow"/>
             <Button
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="25"
                 android:id="@+id/new_class_button"
-                android:text="+ class"/>
-
+                android:text="@string/class_add_str"
+                android:contentDescription="@string/add_a_class"/>
         </LinearLayout>
-
     </LinearLayout>
 
 </LinearLayout>

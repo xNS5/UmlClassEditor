@@ -30,6 +30,7 @@ import com.nathaniel.motus.umlclasseditor.model.Visibility;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -206,7 +207,7 @@ public class AttributeEditorFragment extends EditorFragment implements View.OnCl
                     mArrayRadio.setChecked(true);
                     break;
             }
-            mDimEdit.setText(Integer.toString(mUmlClassAttribute.getArrayDimension()));
+            mDimEdit.setText(String.format(Locale.getDefault(), "%d",mUmlClassAttribute.getArrayDimension()));
             if (mUmlClassAttribute.getTypeMultiplicity() == TypeMultiplicity.ARRAY)
                 setOnArrayDisplay();
             else
@@ -238,12 +239,12 @@ public class AttributeEditorFragment extends EditorFragment implements View.OnCl
 
     private void setOnEditDisplay() {
         mDeleteAttributeButton.setVisibility(View.VISIBLE);
-        mEditAttributeText.setText("Edit attribute");
+        mEditAttributeText.setText(getContext().getString(R.string.edit_attribute_string));
     }
 
     private void setOnCreateDisplay() {
         mDeleteAttributeButton.setVisibility(View.INVISIBLE);
-        mEditAttributeText.setText("Create attribute");
+        mEditAttributeText.setText(getContext().getString(R.string.create_attribute_string));
     }
 
     private void setOnArrayDisplay() {

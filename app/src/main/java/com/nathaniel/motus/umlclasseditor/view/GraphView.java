@@ -14,6 +14,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -147,8 +148,8 @@ public class GraphView extends View implements View.OnTouchListener{
         float zoom=attr.getFloat(R.styleable.GraphView_zoom,-1);
         int xOffset=attr.getInt(R.styleable.GraphView_xOffset,-1);
         int yOffset=attr.getInt(R.styleable.GraphView_yOffset,-1);
-
         init(zoom,xOffset,yOffset);
+        attr.recycle();
     }
 
 //    **********************************************************************************************
@@ -197,6 +198,7 @@ public class GraphView extends View implements View.OnTouchListener{
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        canvas.save();
 
         updateProjectGeometricalParameters();
 
@@ -633,7 +635,8 @@ public class GraphView extends View implements View.OnTouchListener{
                         mGraphFragment.setStartClass(getTouchedClass(mLastTouchX,mLastTouchY));
                         mGraphFragment.setExpectingStartClass(false);
                         mGraphFragment.setExpectingEndClass(true);
-                        mGraphFragment.setPrompt("Choose end class");
+//                        mGraphFragment.setPrompt("Choose end class");
+                        Toast.makeText(getContext(), "Choose end class", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;

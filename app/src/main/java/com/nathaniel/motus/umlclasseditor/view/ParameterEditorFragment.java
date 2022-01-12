@@ -29,6 +29,7 @@ import com.nathaniel.motus.umlclasseditor.model.UmlType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -198,7 +199,7 @@ public class ParameterEditorFragment extends EditorFragment implements View.OnCl
                 mCollectionRadio.setChecked(true);
             if (mMethodParameter.getTypeMultiplicity() == TypeMultiplicity.ARRAY)
                 mArrayRadio.setChecked(true);
-            mDimEdit.setText(Integer.toString(mMethodParameter.getArrayDimension()));
+            mDimEdit.setText(String.format(Locale.getDefault(), "%d", mMethodParameter.getArrayDimension()));
             if (mMethodParameter.getTypeMultiplicity() == TypeMultiplicity.ARRAY)
                 setOnArrayDisplay();
             else setOnSingleDisplay();
@@ -224,12 +225,12 @@ public class ParameterEditorFragment extends EditorFragment implements View.OnCl
     }
 
     private void setOnEditDisplay(){
-        mEditParameterText.setText("Edit parameter");
+        mEditParameterText.setText(getContext().getString(R.string.edit_parameter_string));
         mDeleteParameterButton.setVisibility(View.VISIBLE);
     }
 
     private void setOnCreateDisplay() {
-        mEditParameterText.setText("Create parameter");
+        mEditParameterText.setText(getContext().getString(R.string.create_parameter_string));
         mDeleteParameterButton.setVisibility(View.INVISIBLE);
     }
 

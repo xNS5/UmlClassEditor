@@ -12,11 +12,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nathaniel.motus.umlclasseditor.R;
 import com.nathaniel.motus.umlclasseditor.controller.FragmentObserver;
 import com.nathaniel.motus.umlclasseditor.model.UmlClass;
 import com.nathaniel.motus.umlclasseditor.model.UmlRelation;
+
+import java.util.Objects;
 
 public class GraphFragment extends Fragment implements View.OnClickListener {
 
@@ -151,41 +154,41 @@ public class GraphFragment extends Fragment implements View.OnClickListener {
 //    **********************************************************************************************
 
     private void configureViews() {
-        mGraphView=getActivity().findViewById(R.id.graphview);
+        mGraphView= requireActivity().findViewById(R.id.graphview);
         mGraphView.setTag(GRAPHVIEW_TAG);
         mGraphView.setGraphFragment(this);
 
-        mGraphText=getActivity().findViewById(R.id.graph_text);
+        mGraphText= requireActivity().findViewById(R.id.graph_text);
 
-        mInheritanceButton=getActivity().findViewById(R.id.inheritance_button);
+        mInheritanceButton=requireActivity().findViewById(R.id.inheritance_button);
         mInheritanceButton.setTag(INHERITANCE_BUTTON_TAG);
         mInheritanceButton.setOnClickListener(this);
 
-        mRealizationButton=getActivity().findViewById(R.id.realization_button);
+        mRealizationButton=requireActivity().findViewById(R.id.realization_button);
         mRealizationButton.setTag(REALIZATION_BUTTON_TAG);
         mRealizationButton.setOnClickListener(this);
 
-        mAggregationButton=getActivity().findViewById(R.id.aggregation_button);
+        mAggregationButton=requireActivity().findViewById(R.id.aggregation_button);
         mAggregationButton.setTag(AGGREGATION_BUTTON_TAG);
         mAggregationButton.setOnClickListener(this);
 
-        mEscapeButton=getActivity().findViewById(R.id.escape_button);
+        mEscapeButton=requireActivity().findViewById(R.id.escape_button);
         mEscapeButton.setTag(ESCAPE_BUTTON_TAG);
         mEscapeButton.setOnClickListener(this);
 
-        mAssociationButton=getActivity().findViewById(R.id.association_button);
+        mAssociationButton=requireActivity().findViewById(R.id.association_button);
         mAssociationButton.setTag(ASSOCIATION_BUTTON_TAG);
         mAssociationButton.setOnClickListener(this);
 
-        mDependancyButton=getActivity().findViewById(R.id.dependency_button);
+        mDependancyButton=requireActivity().findViewById(R.id.dependency_button);
         mDependancyButton.setTag(DEPENDENCY_BUTTON_TAG);
         mDependancyButton.setOnClickListener(this);
 
-        mCompositionButton=getActivity().findViewById(R.id.composition_button);
+        mCompositionButton=requireActivity().findViewById(R.id.composition_button);
         mCompositionButton.setTag(COMPOSITION_BUTTON_TAG);
         mCompositionButton.setOnClickListener(this);
 
-        mNewClassButton=getActivity().findViewById(R.id.new_class_button);
+        mNewClassButton=requireActivity().findViewById(R.id.new_class_button);
         mNewClassButton.setTag(NEW_CLASS_BUTTON_TAG);
         mNewClassButton.setOnClickListener(this);
     }
@@ -219,7 +222,8 @@ public class GraphFragment extends Fragment implements View.OnClickListener {
 
             case NEW_CLASS_BUTTON_TAG:
                 this.setExpectingTouchLocation(true);
-                this.setPrompt("Locate the new class");
+//                this.setPrompt("Locate the new class");
+                Toast.makeText(getContext(), "Tap where the new class should go", Toast.LENGTH_LONG).show();
                 break;
 
             case INHERITANCE_BUTTON_TAG:
@@ -260,7 +264,8 @@ public class GraphFragment extends Fragment implements View.OnClickListener {
         this.setExpectingStartClass(true);
         this.setExpectingEndClass(false);
         this.setUmlRelationType(relationType);
-        this.setPrompt("Choose start class");
+//        this.setPrompt("Choose start class");
+        Toast.makeText(getContext(), "Choose start class", Toast.LENGTH_SHORT).show();
     }
 
     private void clearInput() {
